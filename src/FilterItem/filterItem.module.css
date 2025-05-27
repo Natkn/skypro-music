@@ -1,0 +1,20 @@
+.filter__dropdown {
+  position: relative;
+  border-radius: 10px;
+  z-index: 10;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: var(--dropdown-padding, 34px);
+  max-height: 305px;
+  max-width: 248px;
+}
+
+.filter__dropdown[data-filter-type='genre'] {
+  --dropdown-padding: 18px;
+}
+
+.filter__dropdown[data-filter-type='year'] {
+  --dropdown-padding: 0px;
+}
