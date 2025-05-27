@@ -34,6 +34,10 @@
   cursor: pointer;
 }
 
+.active {
+  color: #b672ff;
+  border: 1px solid #b672ff;
+}
 .filter__button:not(:last-child) {
   margin-right: 10px;
 }
