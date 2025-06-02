@@ -1,3 +1,4 @@
+'use client';
 import classnames from 'classnames';
 import styles from './centerblock.module.css';
 import { data } from '@/data';
@@ -31,7 +32,9 @@ export default function Centerblock() {
           </div>
         </div>
         <div className={styles.content__playlist}>
-          <Track />
+          {data.map((track) => (
+            <Track key={track._id} track={track} />
+          ))}
         </div>
       </div>
     </div>
