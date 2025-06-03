@@ -7,7 +7,7 @@ import { TrackType } from '@/sharedTypes/sharedTypes';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { setCurrentTrack, setIsPlay } from '@/store/fearures/trackSlice';
 import classNames from 'classnames';
-import PartyIcon from '../../public/image/icon/party.svg';
+import PartyIcon from './PartyIcon';
 
 type trackTypeProp = {
   track: TrackType;

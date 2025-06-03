@@ -124,8 +124,8 @@
 
 .waveAnimation {
   animation: wave 1s infinite linear;
-  stroke: #f00ce4;
-  fill: rgb(231, 139, 20);
+  fill: #b62ce4;
+  stroke: #fc36f1;
 }
 
 @keyframes wave {
