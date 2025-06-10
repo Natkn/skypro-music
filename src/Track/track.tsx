@@ -5,21 +5,27 @@ import styles from './track.module.css';
 import { formatTimeTime } from '@/utils/helper';
 import { TrackType } from '@/sharedTypes/sharedTypes';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { setCurrentTrack, setIsPlay } from '@/store/fearures/trackSlice';
+import {
+  setCurrentPlaylist,
+  setCurrentTrack,
+  setIsPlay,
+} from '@/store/fearures/trackSlice';
 import classNames from 'classnames';
 import PartyIcon from './PartyIcon';
 
 type trackTypeProp = {
   track: TrackType;
+  playlist: TrackType[];
 };
 
-export default function Track({ track }: trackTypeProp) {
+export default function Track({ track, playlist }: trackTypeProp) {
   const dispatch = useAppDispatch();
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
 
   const onClickTrack = () => {
     dispatch(setCurrentTrack(track));
+    dispatch(setCurrentPlaylist(playlist));
     dispatch(setIsPlay(true));
   };
 

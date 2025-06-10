@@ -133,3 +133,9 @@ export const data: TrackType[] = [
     stared_user: [],
   },
 ];
+
+export const playlist = data.map((track) => ({
+  id: track._id,
+  title: track.name,
+  url: track.track_file,
+}));

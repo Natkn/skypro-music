@@ -90,6 +90,7 @@
 
 .player__btnPrev {
   margin-right: 23px;
+  cursor: pointer;
 }
 
 .player__btnPrevSvg {
@@ -99,6 +100,7 @@
 
 .player__btnPlay {
   margin-right: 23px;
+  cursor: pointer;
 }
 
 .player__btnPlaySvg {
@@ -110,6 +112,7 @@
 .player__btnNext {
   margin-right: 28px;
   fill: #a53939;
+  cursor: pointer;
 }
 
 .player__btnNextSvg {
@@ -144,6 +147,10 @@
   height: 12px;
   fill: transparent;
   stroke: #696969;
+}
+
+.player__btnShuffleSvg.active {
+  stroke: #b672ff;
 }
 
 .player__trackPlay {
