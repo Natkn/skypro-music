@@ -1,5 +1,5 @@
 import Link from 'next/link';
-//import Image from 'next/image';
+
 import classnames from 'classnames';
 import styles from './bar.module.css';
 
