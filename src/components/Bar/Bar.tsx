@@ -9,20 +9,26 @@ import {
   setIsPlay,
   setNextTrack,
   setPrevTrack,
+  toggleLoop,
   toggleShuffle,
 } from '@/store/fearures/trackSlice';
-import ProgressBar from '../ProgressBar/Progressbar';
+import ProgressBar from '../ProgressBar/ProgressBar';
+import { formatTime } from '@/utils/helper';
 
 export default function Bar() {
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const dispatch = useAppDispatch();
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isLoop, setIsLoop] = useState(false);
   const [isLoadedTrack, setIsLoadedrack] = useState(false);
   const [volume, setVolume] = useState(50);
+  const [displayVolume, setDisplayVolume] = useState(50);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isShuffle, setIsShuffle] = useState(false);
+  const isLoopFromStore = useAppSelector((state) => state.tracks.isLoop);
+  const [isLoop, setIsLoop] = useState(false);
+  const [volumeVisible, setVolumeVisible] = useState(false);
 
   useEffect(() => {
     if (audioRef.current && currentTrack?.track_file) {
@@ -70,10 +76,6 @@ export default function Bar() {
     }
   };
 
-  const onToggleLoop = () => {
-    setIsLoop(!isLoop);
-  };
-
   const onTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
@@ -102,9 +104,14 @@ export default function Bar() {
   const onChangeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(e.target.value);
     setVolume(newVolume);
+    setDisplayVolume(newVolume);
+    setVolumeVisible(true);
     if (audioRef.current) {
       audioRef.current.volume = newVolume / 100;
     }
+    setTimeout(() => {
+      setVolumeVisible(false);
+    }, 5000);
   };
 
   const onNextTrack = () => {
@@ -117,6 +124,12 @@ export default function Bar() {
 
   const onToggleShuffle = () => {
     dispatch(toggleShuffle());
+    setIsShuffle(!isShuffle);
+  };
+
+  const onToggleLoop = () => {
+    dispatch(toggleLoop());
+    setIsLoop(!isLoop);
   };
 
   return (
@@ -125,19 +138,29 @@ export default function Bar() {
         <audio
           ref={audioRef}
           src={currentTrack?.track_file}
-          loop={isLoop}
           onTimeUpdate={onTimeUpdate}
           onLoadedMetadata={onLoadedMetadata}
-          onEnded={() => console.log('Next track')}
+          onEnded={() => {
+            if (isLoopFromStore) {
+              audioRef.current?.play();
+            } else {
+              dispatch(setNextTrack());
+            }
+          }}
         />
-
-        <ProgressBar
-          max={audioRef.current?.duration || 0}
-          step={0.1}
-          readOnly={!isLoadedTrack}
-          value={currentTime}
-          onChange={onChangeProgress}
-        />
+        <div className={styles.progressBarContainer}>
+          <ProgressBar
+            max={audioRef.current?.duration || 0}
+            step={0.1}
+            readOnly={!isLoadedTrack}
+            value={currentTime}
+            onChange={onChangeProgress}
+          />
+          <div className={styles.timeDisplay}>
+            <span>{formatTime(currentTime)}</span> /
+            <span>{formatTime(duration)}</span>
+          </div>
+        </div>
         <div className={styles.bar__playerBlock}>
           <div className={styles.bar__player}>
             <div className={styles.player__controls}>
@@ -165,7 +188,11 @@ export default function Bar() {
                 className={classnames(styles.player__btnRepeat, styles.btnIcon)}
                 onClick={onToggleLoop}
               >
-                <svg className={styles.player__btnRepeatSvg}>
+                <svg
+                  className={classnames(styles.player__btnRepeatSvg, {
+                    [styles.player__btnLoopSvgActive]: isLoopFromStore,
+                  })}
+                >
                   <use xlinkHref="/Image/icon/sprite.svg#icon-repeat"></use>
                 </svg>
               </div>
@@ -177,10 +204,9 @@ export default function Bar() {
                 onClick={onToggleShuffle}
               >
                 <svg
-                  className={classnames(
-                    styles.player__btnShuffleSvg,
-                    { [styles.player__btnShuffleSvgActive]: onToggleShuffle }, // Применяем класс active, если isShuffleOn равно true
-                  )}
+                  className={classnames(styles.player__btnShuffleSvg, {
+                    [styles.player__btnShuffleSvgActive]: isShuffle,
+                  })}
                 >
                   <use xlinkHref="/Image/icon/sprite.svg#icon-shuffle"></use>
                 </svg>
@@ -238,16 +264,28 @@ export default function Bar() {
                   {duration}{' '}
                 </svg>
               </div>
-              <div className={classnames(styles.volume__progress, styles.btn)}>
-                <input
-                  className={classnames(
-                    styles.volume__progressLine,
-                    styles.btn,
-                  )}
-                  type="range"
-                  name="range"
-                  onChange={onChangeVolume}
-                />
+              <div className={styles.volumeContainer}>
+                <div
+                  className={classnames(styles.volume__progress, styles.btn)}
+                >
+                  <input
+                    className={classnames(
+                      styles.volume__progressLine,
+                      styles.btn,
+                    )}
+                    type="range"
+                    name="range"
+                    onChange={onChangeVolume}
+                    value={volume}
+                  />
+                </div>
+                <div
+                  className={classnames(styles.volumeDisplay, {
+                    [styles.volumeVisible]: volumeVisible,
+                  })}
+                >
+                  <span> {displayVolume}</span>
+                </div>
               </div>
             </div>
           </div>

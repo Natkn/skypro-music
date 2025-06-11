@@ -7,6 +7,7 @@ type initialStateType = {
   playlist: TrackType[];
   isShuffle: boolean;
   shufflePlaylist: TrackType[];
+  isLoop: boolean;
 };
 
 const initialState: initialStateType = {
@@ -15,6 +16,7 @@ const initialState: initialStateType = {
   playlist: [],
   isShuffle: false,
   shufflePlaylist: [],
+  isLoop: false,
 };
 
 const trackSlice = createSlice({
@@ -52,6 +54,9 @@ const trackSlice = createSlice({
     toggleShuffle: (state) => {
       state.isShuffle = !state.isShuffle;
     },
+    toggleLoop: (state) => {
+      state.isLoop = !state.isLoop;
+    },
   },
 });
 
@@ -62,5 +67,6 @@ export const {
   setNextTrack,
   setPrevTrack,
   toggleShuffle,
+  toggleLoop,
 } = trackSlice.actions;
 export const trackSliceReducer = trackSlice.reducer;
