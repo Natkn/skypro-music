@@ -66,6 +66,25 @@
   -ms-flex-direction: column;
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: hidden;
+  height: 500px;
+}
+
+.content__playlist::-webkit-scrollbar {
+  width: 5px;
+}
+
+.content__playlist::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content__playlist::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.content__playlist::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .playlistTitle__svg {
