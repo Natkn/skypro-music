@@ -2,17 +2,36 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './sidebar.module.css';
+import { useRouter } from 'next/navigation';
 
-export default function Sidebar() {
+interface SidebarProps {
+  username: string;
+  signOut: () => Promise<void>;
+}
+
+export default function Sidebar({ username, signOut }: SidebarProps) {
+  const router = useRouter();
+
+  const handleImageClick = async () => {
+    {
+      await signOut();
+      router.push('/auth/signin');
+    }
+  };
+
   return (
     <div className={styles.main__sidebar}>
       <div className={styles.sidebar__personal}>
-        <p className={styles.sidebar__personalName}>Sergey.Ivanov</p>
-        <div className={styles.sidebar__icon}>
+        <p className={styles.sidebar__personalName}>{username}</p>
+        <Link
+          href="/auth/signin"
+          className={styles.sidebar__icon}
+          onClick={handleImageClick}
+        >
           <svg>
             <use xlinkHref="/Image/icon/sprite.svg#logout"></use>
           </svg>
-        </div>
+        </Link>
       </div>
       <div className={styles.sidebar__block}>
         <div className={styles.sidebar__list}>
