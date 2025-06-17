@@ -3,20 +3,23 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './sidebar.module.css';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-interface SidebarProps {
-  username: string;
-  signOut: () => Promise<void>;
-}
-
-export default function Sidebar({ username, signOut }: SidebarProps) {
+export default function Sidebar({}) {
   const router = useRouter();
+  const [username, setUsername] = useState('');
 
-  const handleImageClick = async () => {
-    {
-      await signOut();
-      router.push('/auth/signin');
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUsername(storedUsername);
     }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('username');
+    router.push('/auth/signin');
   };
 
   return (
@@ -26,7 +29,7 @@ export default function Sidebar({ username, signOut }: SidebarProps) {
         <Link
           href="/auth/signin"
           className={styles.sidebar__icon}
-          onClick={handleImageClick}
+          onClick={handleLogout}
         >
           <svg>
             <use xlinkHref="/Image/icon/sprite.svg#logout"></use>

@@ -83,7 +83,6 @@ export default function Bar() {
   };
 
   const onLoadedMetadata = () => {
-    console.log('Start');
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
       audioRef.current.play();

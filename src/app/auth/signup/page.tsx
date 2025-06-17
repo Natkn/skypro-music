@@ -56,6 +56,8 @@ export default function SignUp() {
     try {
       const response = await registerUser({ email, password, username });
       localStorage.setItem('authToken', JSON.stringify(response));
+      localStorage.setItem('username', username);
+      console.log(username);
       router.push('/music/main');
     } catch (error) {
       if (error instanceof AxiosError) {

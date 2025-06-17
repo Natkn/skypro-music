@@ -106,3 +106,17 @@
   width: 60px;
   text-align: end;
 }
+
+.loadingText {
+  color: white;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.errorText {
+  color: white;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+}

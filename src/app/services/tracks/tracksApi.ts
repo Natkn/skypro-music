@@ -7,3 +7,9 @@ export const getTracks = (): Promise<TrackType[]> => {
     return res.data.data;
   });
 };
+
+export const getSelectedTracks = (): Promise<TrackType[]> => {
+  return axios(BASE_URL + `/catalog/selection/<id>/`).then((res) => {
+    return res.data.data;
+  });
+};

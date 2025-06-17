@@ -1,7 +1,20 @@
-'use client';
-import { useParams } from 'next/navigation';
+import MainLayout from '@/app/layout';
 
-export default function CategoryPage() {
-  const params = useParams<{ id: string }>();
-  return <h1>Category {params.id}</h1>;
+import Centerblock from './playlistOne';
+
+interface PageProps {
+  params: {
+    categoryId: string;
+  };
+}
+
+export default function CategoryPage({ params }: PageProps) {
+  // Получаем params
+  const { categoryId } = params; // Получаем categoryId из params
+
+  return (
+    <MainLayout>
+      <Centerblock categoryId={categoryId} />
+    </MainLayout>
+  );
 }

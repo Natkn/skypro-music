@@ -42,8 +42,9 @@ export default function Signin() {
     }
     setisLoading(true);
     authUser({ email, password })
-      .then((token) => {
-        localStorage.setItem('authToken', JSON.stringify(token));
+      .then((userData) => {
+        localStorage.setItem('authToken', JSON.stringify(userData));
+
         if (router) {
           router.push('/music/main');
         } else {
