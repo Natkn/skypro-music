@@ -6,21 +6,26 @@ import Search from '../Search/Search';
 import Filter from '@/Filter/filter';
 import Track from '@/Track/track';
 import { useEffect, useState } from 'react';
+import { TrackType } from '@/sharedTypes/sharedTypes';
 
-export default function Centerblock() {
+interface CenterblockProps {
+  tracks: TrackType[];
+  loading: boolean;
+  errorMessage: string | null;
+  setLoading: (loading: boolean) => void;
+}
+export default function Centerblock({ tracks }: CenterblockProps) {
+  console.log('Centerblock received tracks:', tracks);
   const [loading, setLoading] = useState(true);
-  const [tracks, setTracks] = useState([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setTimeout(() => {
-          setTracks(tracks);
           setLoading(false);
         }, 500);
-      } catch (err) {
-        console.error('Ошибка при загрузке данных:', err);
+      } catch {
         setErrorMessage(
           'Произошла ошибка при загрузке данных. Попробуйте позже.',
         );
@@ -60,8 +65,8 @@ export default function Centerblock() {
           ) : errorMessage ? (
             <p className={styles.errorText}>{errorMessage}</p>
           ) : (
-            data.map((track) => (
-              <Track key={track._id} track={track} playlist={data} />
+            tracks.map((track) => (
+              <Track key={track._id} track={track} playlist={tracks} />
             ))
           )}
         </div>

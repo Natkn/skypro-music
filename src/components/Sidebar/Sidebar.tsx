@@ -9,6 +9,9 @@ export default function Sidebar({}) {
   const router = useRouter();
   const [username, setUsername] = useState('');
 
+  const handleClick = () => {
+    router.push('/music/category/2');
+  };
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
@@ -39,7 +42,11 @@ export default function Sidebar({}) {
       <div className={styles.sidebar__block}>
         <div className={styles.sidebar__list}>
           <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href="/music/category/1">
+            <Link
+              className={styles.sidebar__link}
+              href="#"
+              onClick={handleClick}
+            >
               <Image
                 className={styles.sidebar__Image}
                 src="/Image/playlist01.png"
@@ -50,7 +57,7 @@ export default function Sidebar({}) {
             </Link>
           </div>
           <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href="/music/category/2">
+            <Link className={styles.sidebar__link} href="/music/category/3">
               <Image
                 className={styles.sidebar__Image}
                 src="/Image/playlist02.png"
@@ -61,7 +68,7 @@ export default function Sidebar({}) {
             </Link>
           </div>
           <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href="/music/category/3">
+            <Link className={styles.sidebar__link} href="/music/category/4">
               <Image
                 className={styles.sidebar__Image}
                 src="/Image/playlist03.png"
