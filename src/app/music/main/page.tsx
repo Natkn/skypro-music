@@ -33,6 +33,7 @@ export default function Home() {
       <p className={styles.errorText}>{error}</p>
       <Centerblock
         fetchTracks={getTracks}
+        tracks={tracks}
         loading={loading}
         errorMessage={error}
         setLoading={setLoading}

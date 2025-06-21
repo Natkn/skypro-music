@@ -48,7 +48,7 @@ export default function Sidebar({ onCategoryClick }: SidebarProps) {
             <Link
               className={styles.sidebar__link}
               onClick={() => handleClick('2')}
-              href="#"
+              href={`/music/category/2`}
             >
               <Image
                 className={styles.sidebar__Image}

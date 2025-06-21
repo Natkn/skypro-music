@@ -1,7 +1,6 @@
 export interface TrackType {
   _id: number;
   name: string;
-  items: string;
   author: string;
   release_date: string;
   genre: string[];
