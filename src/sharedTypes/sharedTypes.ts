@@ -1,6 +1,7 @@
 export interface TrackType {
   _id: number;
   name: string;
+  items: string;
   author: string;
   release_date: string;
   genre: string[];
@@ -13,7 +14,7 @@ export interface TrackType {
 
 export interface FilterProps {
   data: TrackType[];
-  items: string[];
+  items: TrackType[];
   isOpen: boolean;
   onClose: () => void;
 }

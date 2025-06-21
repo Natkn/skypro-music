@@ -14,12 +14,18 @@ export const getTracks = (): Promise<TrackType[]> => {
 };
 
 export const getSelectedTracks = (): Promise<TrackType[]> => {
-  return axios(BASE_URL + `/catalog/selection/2/`).then((res) => {
-    if (res.data && res.data.data) {
-      return res.data.data;
-    } else {
-      console.error('API returned unexpected data structure:', res.data);
-      return [];
-    }
-  });
+  return axios
+    .get(BASE_URL + `/catalog/selection/2/`)
+    .then((res) => {
+      if (res.data && res.data.data) {
+        return res.data.data;
+      } else {
+        console.error('API returned unexpected data structure:', res.data);
+        return [];
+      }
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error);
+      throw error; // Пробрасываем ошибку, чтобы её обработали в компоненте
+    });
 };

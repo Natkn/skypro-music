@@ -4,31 +4,53 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './filter.module.css';
 import classNames from 'classnames';
 import { TrackType } from '@/sharedTypes/sharedTypes';
-import { data } from '@/data';
+
 import FilterItem from '@/FilterItem/filterItem';
+import { getTracks } from '@/app/services/tracks/tracksApi';
 
-interface FilterProps {
-  data: TrackType[];
-}
-
-export default function Filter({}: FilterProps) {
+export default function Filter({}) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [authors, setAuthors] = useState<string[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
-
+  const [tracks, setTracks] = useState<TrackType[]>([]);
   const authorButtonRef = useRef<HTMLDivElement>(null!);
   const yearButtonRef = useRef<HTMLDivElement>(null!);
   const genreButtonRef = useRef<HTMLDivElement>(null!);
 
   useEffect(() => {
-    if (data && data.length > 0) {
-      const uniqueAuthors = [...new Set(data.map((track) => track.author))];
+    const fetchData = async () => {
+      try {
+        const response = await getTracks();
+        if (!response) {
+          throw new Error('Network response was not ok');
+        }
+        const data: TrackType[] = await response;
+        setTracks(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (tracks && tracks.length > 0) {
+      // Extract unique authors
+      const uniqueAuthors = [...new Set(tracks.map((track) => track.author))];
       setAuthors(uniqueAuthors);
 
-      const firstGenre = data[0].genre;
-      setGenres(firstGenre);
+      // Extract unique genres
+      const allGenres: string[] = [];
+      tracks.forEach((track) => {
+        if (track.genre && Array.isArray(track.genre)) {
+          track.genre.forEach((genre) => allGenres.push(genre));
+        }
+      });
+      const uniqueGenres = [...new Set(allGenres)];
+      setGenres(uniqueGenres);
     }
-  }, []);
+  }, [tracks]);
 
   const handleFilterClick = (filterName: string) => {
     setActiveFilter((prevFilter) =>
@@ -98,22 +120,26 @@ export default function Filter({}: FilterProps) {
             [styles['filter__list--author']]: activeFilter === 'author',
           })}
         >
-          <FilterItem
-            isOpen={activeFilter === 'author'}
-            onClose={() => setActiveFilter(null)}
-            anchorRef={authorButtonRef}
-            filterType="author"
-          >
-            {renderAuthorFilter()}
-          </FilterItem>
+          {activeFilter === 'author' && ( // Render FilterItem only when activeFilter is 'author'
+            <FilterItem
+              isOpen={activeFilter === 'author'}
+              onClose={() => setActiveFilter(null)}
+              anchorRef={authorButtonRef}
+              filterType="author"
+            >
+              {renderAuthorFilter()}
+            </FilterItem>
+          )}
         </div>
       </div>
+
       <div className={styles.filter__list_container}>
         <div
           className={classNames(styles.filter__button, {
             [styles.active]: activeFilter === 'year',
           })}
           onClick={() => handleFilterClick('year')}
+          ref={yearButtonRef}
         >
           году выпуска
         </div>
@@ -123,14 +149,16 @@ export default function Filter({}: FilterProps) {
             [styles['filter__list--year']]: activeFilter === 'year',
           })}
         >
-          <FilterItem
-            isOpen={activeFilter === 'year'}
-            onClose={() => setActiveFilter(null)}
-            anchorRef={yearButtonRef}
-            filterType="year"
-          >
-            {renderYearFilter()}
-          </FilterItem>
+          {activeFilter === 'year' && ( // Render FilterItem only when activeFilter is 'year'
+            <FilterItem
+              isOpen={activeFilter === 'year'}
+              onClose={() => setActiveFilter(null)}
+              anchorRef={yearButtonRef}
+              filterType="year"
+            >
+              {renderYearFilter()}
+            </FilterItem>
+          )}
         </div>
       </div>
 
@@ -150,14 +178,16 @@ export default function Filter({}: FilterProps) {
             [styles['filter__list--genre']]: activeFilter === 'genre',
           })}
         >
-          <FilterItem
-            isOpen={activeFilter === 'genre'}
-            onClose={() => setActiveFilter(null)}
-            anchorRef={genreButtonRef}
-            filterType="genre"
-          >
-            {renderGenreFilter()}
-          </FilterItem>
+          {activeFilter === 'genre' && ( // Render FilterItem only when activeFilter is 'genre'
+            <FilterItem
+              isOpen={activeFilter === 'genre'}
+              onClose={() => setActiveFilter(null)}
+              anchorRef={genreButtonRef}
+              filterType="genre"
+            >
+              {renderGenreFilter()}
+            </FilterItem>
+          )}
         </div>
       </div>
     </div>

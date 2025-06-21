@@ -3,7 +3,7 @@ import styles from './../../../components/Centerblock/centerblock.module.css';
 import '../../../app/page.css';
 import Centerblock from '@/components/Centerblock/Centerblock';
 import { useEffect, useState } from 'react';
-import { getTracks } from '@/app/services/tracks/tracksApi';
+import { getSelectedTracks, getTracks } from '@/app/services/tracks/tracksApi';
 import { TrackType } from '@/sharedTypes/sharedTypes';
 import { AxiosError } from 'axios';
 
@@ -12,7 +12,7 @@ export default function Home() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getTracks()
+    getSelectedTracks()
       .then((res) => {
         setTracks(res);
       })
@@ -32,11 +32,20 @@ export default function Home() {
     <>
       <p className={styles.errorText}>{error}</p>
       <Centerblock
-        tracks={tracks || []}
+        fetchTracks={getTracks}
         loading={loading}
-        setLoading={setLoading}
         errorMessage={error}
+        setLoading={setLoading}
       />
+      {!loading && !error && (
+        <ul>
+          {tracks.map((track) => (
+            <li key={track._id}>
+              {track.name} - {track.author}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }
