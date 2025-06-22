@@ -57,7 +57,7 @@ export default function SignUp() {
       const response = await registerUser({ email, password, username });
       localStorage.setItem('authToken', JSON.stringify(response));
       localStorage.setItem('username', username);
-      console.log(username);
+
       router.push('/music/main');
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -66,7 +66,6 @@ export default function SignUp() {
             error.response.data.message ||
               'Ошибка регистрации. Пожалуйста, попробуйте позже.',
           );
-          console.log('Server error:', error.response.data);
         } else if (error.request) {
           setErrorMessage('Ошибка сети. Проверьте подключение к интернету.');
         } else {

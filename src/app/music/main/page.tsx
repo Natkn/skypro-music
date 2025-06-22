@@ -14,7 +14,12 @@ export default function Home() {
   useEffect(() => {
     getSelectedTracks()
       .then((res) => {
-        setTracks(res);
+        if (
+          Array.isArray(res) &&
+          res.every((item) => typeof item === 'number')
+        ) {
+          setTracks(res);
+        }
       })
       .catch((error) => {
         if (error instanceof AxiosError) {

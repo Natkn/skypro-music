@@ -18,11 +18,6 @@ export default function Centerblock({ fetchTracks }: CenterblockProps) {
   const [tracks, setTracks] = useState<TrackType[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  useEffect(() => {
-    console.log('Centerblock - Tracks:', tracks);
-    console.log('Centerblock - Loading:', loading);
-    console.log('Centerblock - ErrorMessage:', errorMessage);
-  }, [tracks, loading, errorMessage]);
 
   useEffect(() => {
     const fetchData = async () => {

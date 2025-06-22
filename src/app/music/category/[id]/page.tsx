@@ -18,43 +18,52 @@ interface PageProps {
 interface ApiResponse {
   _id: number;
   name: string;
-  items: number[]; // items содержит ID треков
+  items: number[];
+  owner: number[];
+  __v: number;
+}
+
+export interface PlaylistResponse {
+  _id: number;
+  name: string;
+  items: number[];
   owner: number[];
   __v: number;
 }
 
 export default function PlaylistPage({}: PageProps) {
-  // const { categoryId } = params;
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [tracks, setTracks] = useState<TrackType[]>([]);
+  const [playlistData, setPlaylistData] = useState<ApiResponse | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const playlistResponse = await getSelectedTracks();
+        const playlistResponse =
+          (await getSelectedTracks()) as PlaylistResponse;
+
         if (!playlistResponse) {
-          throw new Error('Network response was not ok');
+          throw new Error('Playlist not found!');
         }
 
-        const playlistData: ApiResponse = playlistResponse;
-        const trackIds = playlistData.items;
+        setPlaylistData(playlistData);
 
-        // Получаем детали каждого трека по его ID
+        const trackIds: number[] = playlistResponse.items;
+
         const trackDetails = await Promise.all(
           trackIds.map(async (trackId) => {
-            const track = await getTrackById(trackId); // Предполагается, что у вас есть функция getTrackById
+            const track = await getTrackById(trackId);
             if (!track) {
               console.warn(`Track with ID ${trackId} not found`);
-              return null; // Или какой-то дефолтный трек
+              return null;
             }
             return track;
           }),
         );
 
-        // Фильтруем null-значения, если какие-то треки не были найдены
         const validTracks = trackDetails.filter(
-          (track): track is TrackType => track !== null,
+          (track: TrackType | null): track is TrackType => track !== null,
         );
 
         setTracks(validTracks);
@@ -66,18 +75,11 @@ export default function PlaylistPage({}: PageProps) {
     };
 
     fetchData();
-  }, []);
+  }, [playlistData]);
 
   const fetchTracks = async (): Promise<TrackType[]> => {
-    return tracks; // Возвращаем текущий массив треков
+    return Promise.resolve(tracks);
   };
-
-  useEffect(() => {
-    console.log('PlaylistPage - Tracks:', tracks);
-    console.log('PlaylistPage - Loading:', loading);
-    console.log('PlaylistPage - ErrorMessage:', errorMessage);
-  }, [tracks, loading, errorMessage]);
-
   return (
     <Centerblock
       tracks={tracks}

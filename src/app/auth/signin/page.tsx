@@ -59,7 +59,6 @@ export default function Signin() {
             console.log(error.response.headers);
             setErrorMessage(error.response.data.message);
           } else if (error.request) {
-            console.log(error.request);
             setErrorMessage(' Network error,try again');
           } else {
             setErrorMessage('Unknown error');
