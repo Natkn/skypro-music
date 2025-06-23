@@ -17,7 +17,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<{ username: string } | null>(null); // Example
+  const [user, setUser] = useState<{ username: string } | null>(null);
   const router = useRouter();
 
   const signOut = async () => {

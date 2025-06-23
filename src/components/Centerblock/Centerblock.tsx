@@ -49,11 +49,10 @@ export default function Centerblock({
   }, [fetchTracks]);
 
   useEffect(() => {
-    // Обновляем заголовок при изменении playlistName
     if (playlistName) {
       setHeaderTitle(playlistName);
     } else {
-      setHeaderTitle('Треки'); // Возвращаем к "Треки", если playlistName становится пустым
+      setHeaderTitle('Треки');
     }
   }, [playlistName]);
 

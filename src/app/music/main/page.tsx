@@ -3,16 +3,17 @@ import styles from './../../../components/Centerblock/centerblock.module.css';
 import '../../../app/page.css';
 import Centerblock from '@/components/Centerblock/Centerblock';
 import { useEffect, useState } from 'react';
-import { getSelectedTracks, getTracks } from '@/app/services/tracks/tracksApi';
+import { getTracks } from '@/app/services/tracks/tracksApi';
 import { TrackType } from '@/sharedTypes/sharedTypes';
 import { AxiosError } from 'axios';
 
-export default function Home() {
+export default function Home({}) {
   const [tracks, setTracks] = useState<TrackType[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    getSelectedTracks()
+    getTracks()
       .then((res) => {
         if (
           Array.isArray(res) &&
@@ -25,7 +26,6 @@ export default function Home() {
         if (error instanceof AxiosError) {
           if (error.response) {
             console.log(error.request);
-            setError('Something went wrong');
           } else {
             console.log('Error', error.message);
             setError('Unknown error');

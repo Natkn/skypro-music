@@ -36,11 +36,9 @@ export default function Filter({}) {
 
   useEffect(() => {
     if (tracks && tracks.length > 0) {
-      // Extract unique authors
       const uniqueAuthors = [...new Set(tracks.map((track) => track.author))];
       setAuthors(uniqueAuthors);
 
-      // Extract unique genres
       const allGenres: string[] = [];
       tracks.forEach((track) => {
         if (track.genre && Array.isArray(track.genre)) {
@@ -120,7 +118,7 @@ export default function Filter({}) {
             [styles['filter__list--author']]: activeFilter === 'author',
           })}
         >
-          {activeFilter === 'author' && ( // Render FilterItem only when activeFilter is 'author'
+          {activeFilter === 'author' && (
             <FilterItem
               isOpen={activeFilter === 'author'}
               onClose={() => setActiveFilter(null)}
@@ -149,7 +147,7 @@ export default function Filter({}) {
             [styles['filter__list--year']]: activeFilter === 'year',
           })}
         >
-          {activeFilter === 'year' && ( // Render FilterItem only when activeFilter is 'year'
+          {activeFilter === 'year' && (
             <FilterItem
               isOpen={activeFilter === 'year'}
               onClose={() => setActiveFilter(null)}
@@ -178,7 +176,7 @@ export default function Filter({}) {
             [styles['filter__list--genre']]: activeFilter === 'genre',
           })}
         >
-          {activeFilter === 'genre' && ( // Render FilterItem only when activeFilter is 'genre'
+          {activeFilter === 'genre' && (
             <FilterItem
               isOpen={activeFilter === 'genre'}
               onClose={() => setActiveFilter(null)}

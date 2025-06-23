@@ -14,9 +14,11 @@ export const getTracks = (): Promise<TrackType[]> => {
   });
 };
 
-export const getSelectedTracks = async (): Promise<PlaylistResponse> => {
+export const getSelectedTracks = async (
+  _id: string,
+): Promise<PlaylistResponse> => {
   try {
-    const response = await axios.get(BASE_URL + `/catalog/selection/2/`);
+    const response = await axios.get(BASE_URL + `/catalog/selection/${_id}/`);
 
     if (response.data && response.data.data) {
       return response.data.data as PlaylistResponse;

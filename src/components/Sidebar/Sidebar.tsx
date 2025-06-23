@@ -39,7 +39,7 @@ export default function Sidebar({}) {
       <div className={styles.sidebar__block}>
         <div className={styles.sidebar__list}>
           <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href={`/music/category/2`}>
+            <Link className={styles.sidebar__link} href="/music/category/2">
               <Image
                 className={styles.sidebar__Image}
                 src="/Image/playlist01.png"

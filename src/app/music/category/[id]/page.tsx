@@ -1,8 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TrackType } from '@/sharedTypes/sharedTypes';
-//import { AxiosError } from 'axios';
-//import styles from '../../../../components/Centerblock/centerblock.module.css';
 import {
   getSelectedTracks,
   getTrackById,
@@ -10,9 +8,8 @@ import {
 import Centerblock from '@/components/Centerblock/Centerblock';
 
 interface PageProps {
-  params: {
-    categoryId?: string;
-  };
+  params: Promise<{ id: string }>;
+  setLoading: (loading: boolean) => void;
 }
 
 interface ApiResponse {
@@ -31,7 +28,9 @@ export interface PlaylistResponse {
   __v: number;
 }
 
-export default function PlaylistPage({}: PageProps) {
+export default function PlaylistPage({ params }: PageProps) {
+  const resolvedParams = React.use(params);
+  const id = resolvedParams.id;
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [tracks, setTracks] = useState<TrackType[]>([]);
@@ -40,8 +39,10 @@ export default function PlaylistPage({}: PageProps) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const playlistResponse =
-          (await getSelectedTracks()) as PlaylistResponse;
+        setLoading(true);
+        const playlistResponse = (await getSelectedTracks(
+          id,
+        )) as PlaylistResponse;
 
         if (!playlistResponse) {
           throw new Error('Playlist not found!');
@@ -65,29 +66,35 @@ export default function PlaylistPage({}: PageProps) {
         const validTracks = trackDetails.filter(
           (track: TrackType | null): track is TrackType => track !== null,
         );
-
+        setLoading(false);
         setTracks(validTracks);
-        setLoading(false);
+        setErrorMessage(null); // Сбрасываем сообщение об ошибке при успешной загрузке
       } catch {
-        setErrorMessage('Error fetching data:');
-        setLoading(false);
+        console.error('Error fetching data:'); // Логируем ошибку для отладки
+        setErrorMessage(
+          errorMessage || 'An error occurred while fetching data.', // Используем сообщение об ошибке, или общее сообщение
+        );
+      } finally {
+        setLoading(false); //  Устанавливаем loading в false в блоке finally, всегда
       }
     };
 
     fetchData();
-  }, []);
+  }, [errorMessage, id]);
 
   const fetchTracks = async (): Promise<TrackType[]> => {
     return Promise.resolve(tracks);
   };
   return (
-    <Centerblock
-      tracks={tracks}
-      loading={loading}
-      errorMessage={errorMessage}
-      setLoading={setLoading}
-      fetchTracks={fetchTracks}
-      playlistName={playlistData?.name}
-    />
+    <>
+      <Centerblock
+        tracks={tracks}
+        loading={loading}
+        errorMessage={errorMessage}
+        setLoading={setLoading}
+        fetchTracks={fetchTracks}
+        playlistName={playlistData?.name}
+      />
+    </>
   );
 }
