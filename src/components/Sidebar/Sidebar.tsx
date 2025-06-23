@@ -5,16 +5,10 @@ import styles from './sidebar.module.css';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-interface SidebarProps {
-  onCategoryClick: (category: string) => void;
-}
-
-export default function Sidebar({ onCategoryClick }: SidebarProps) {
+export default function Sidebar({}) {
   const router = useRouter();
   const [username, setUsername] = useState('');
-  const handleClick = (category: string) => {
-    onCategoryClick(category);
-  };
+
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
@@ -45,11 +39,7 @@ export default function Sidebar({ onCategoryClick }: SidebarProps) {
       <div className={styles.sidebar__block}>
         <div className={styles.sidebar__list}>
           <div className={styles.sidebar__item}>
-            <Link
-              className={styles.sidebar__link}
-              onClick={() => handleClick('2')}
-              href={`/music/category/2`}
-            >
+            <Link className={styles.sidebar__link} href={`/music/category/2`}>
               <Image
                 className={styles.sidebar__Image}
                 src="/Image/playlist01.png"

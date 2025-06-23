@@ -47,7 +47,7 @@ export default function PlaylistPage({}: PageProps) {
           throw new Error('Playlist not found!');
         }
 
-        setPlaylistData(playlistData);
+        setPlaylistData(playlistResponse);
 
         const trackIds: number[] = playlistResponse.items;
 
@@ -75,7 +75,7 @@ export default function PlaylistPage({}: PageProps) {
     };
 
     fetchData();
-  }, [playlistData]);
+  }, []);
 
   const fetchTracks = async (): Promise<TrackType[]> => {
     return Promise.resolve(tracks);
@@ -87,6 +87,7 @@ export default function PlaylistPage({}: PageProps) {
       errorMessage={errorMessage}
       setLoading={setLoading}
       fetchTracks={fetchTracks}
+      playlistName={playlistData?.name}
     />
   );
 }

@@ -10,16 +10,13 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const handleCategoryClick = (category: string) => {
-    console.log(`Clicked on category: ${category}`);
-  };
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <main className={styles.main}>
           <Navigation />
           {children}
-          <Sidebar onCategoryClick={handleCategoryClick} />
+          <Sidebar />
         </main>
         <Bar />
         <footer className="footer"></footer>

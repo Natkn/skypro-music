@@ -13,11 +13,16 @@ interface CenterblockProps {
   errorMessage: string | null;
   setLoading: (loading: boolean) => void;
   tracks: TrackType[];
+  playlistName?: string;
 }
-export default function Centerblock({ fetchTracks }: CenterblockProps) {
+export default function Centerblock({
+  fetchTracks,
+  playlistName,
+}: CenterblockProps) {
   const [tracks, setTracks] = useState<TrackType[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [headerTitle, setHeaderTitle] = useState('Треки');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,10 +48,19 @@ export default function Centerblock({ fetchTracks }: CenterblockProps) {
     fetchData();
   }, [fetchTracks]);
 
+  useEffect(() => {
+    // Обновляем заголовок при изменении playlistName
+    if (playlistName) {
+      setHeaderTitle(playlistName);
+    } else {
+      setHeaderTitle('Треки'); // Возвращаем к "Треки", если playlistName становится пустым
+    }
+  }, [playlistName]);
+
   return (
     <div className={styles.centerblock}>
       <Search title="" />
-      <h2 className={styles.centerblock__h2}>Треки</h2>
+      <h2 className={styles.centerblock__h2}>{headerTitle}</h2>
       <Filter />
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
