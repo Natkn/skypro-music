@@ -68,14 +68,13 @@ export default function PlaylistPage({ params }: PageProps) {
         );
         setLoading(false);
         setTracks(validTracks);
-        setErrorMessage(null); // Сбрасываем сообщение об ошибке при успешной загрузке
-      } catch {
-        console.error('Error fetching data:'); // Логируем ошибку для отладки
+        setErrorMessage(null);
+        console.error('Error fetching data:');
         setErrorMessage(
-          errorMessage || 'An error occurred while fetching data.', // Используем сообщение об ошибке, или общее сообщение
+          errorMessage || 'An error occurred while fetching data.',
         );
       } finally {
-        setLoading(false); //  Устанавливаем loading в false в блоке finally, всегда
+        setLoading(false);
       }
     };
 
