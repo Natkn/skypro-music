@@ -5,17 +5,20 @@ import Bar from '@/components/Bar/Bar';
 import Navigation from '@/components/Navigation/Navigation';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import FetchingTracks from '@/components/FetchingTracks/FetchingTracks';
+import { UseInitAuth } from '@/hooks/useInitAuth';
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
+  UseInitAuth();
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <main className={styles.main}>
           <FetchingTracks />
+
           <Navigation />
           {children}
           <Sidebar />

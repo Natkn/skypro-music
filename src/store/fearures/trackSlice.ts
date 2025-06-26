@@ -11,6 +11,7 @@ type initialStateType = {
   allTracks: TrackType[];
   fetchError: null | string;
   fetchIsLoading: boolean;
+  favTracks: TrackType[];
 };
 
 const initialState: initialStateType = {
@@ -23,6 +24,7 @@ const initialState: initialStateType = {
   allTracks: [],
   fetchError: null,
   fetchIsLoading: true,
+  favTracks: [],
 };
 
 const trackSlice = createSlice({
@@ -72,6 +74,18 @@ const trackSlice = createSlice({
     setFetchLoading: (state, action: PayloadAction<boolean>) => {
       state.fetchIsLoading = action.payload;
     },
+    setFavTrack: (state, action: PayloadAction<TrackType[]>) => {
+      state.favTracks = action.payload;
+    },
+    setDelFavTrack: (state, action: PayloadAction<TrackType[]>) => {
+      state.favTracks = action.payload;
+    },
+    addLikedTracks: (state, action: PayloadAction<TrackType>) => {
+      state.favTracks = [...state.favTracks, action.payload];
+    },
+    removeLikedTracks: (state, action: PayloadAction<TrackType>) => {
+      state.favTracks = [...state.favTracks, action.payload];
+    },
   },
 });
 
@@ -86,5 +100,9 @@ export const {
   setAllTracks,
   setFetchError,
   setFetchLoading,
+  setFavTrack,
+  setDelFavTrack,
+  addLikedTracks,
+  removeLikedTracks,
 } = trackSlice.actions;
 export const trackSliceReducer = trackSlice.reducer;

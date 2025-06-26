@@ -293,6 +293,7 @@
   height: 12px;
   fill: transparent;
   stroke: #696969;
+  cursor: pointer;
 }
 
 .trackPlay__dislike {
@@ -304,7 +305,7 @@
   height: 13px;
   fill: transparent;
   stroke: #696969;
-  visibility: hidden;
+  cursor: pointer;
 }
 
 .volume__content {

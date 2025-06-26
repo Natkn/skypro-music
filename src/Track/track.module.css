@@ -56,6 +56,7 @@
   height: 17px;
   fill: transparent;
   stroke: #4e4e4e;
+  cursor: pointer;
 }
 
 .track__titleLink {
@@ -111,6 +112,13 @@
   margin-right: 17px;
   fill: transparent;
   stroke: #696969;
+  cursor: pointer;
+}
+
+.track__timeSvg.liked {
+  fill: red;
+  stroke: #ffd001;
+  cursor: pointer;
 }
 
 .track__timeText {

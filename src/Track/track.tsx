@@ -12,6 +12,7 @@ import {
 } from '@/store/fearures/trackSlice';
 import classNames from 'classnames';
 import PartyIcon from './PartyIcon';
+import { useLikeTrack } from '@/hooks/useLikeTracks';
 
 type trackTypeProp = {
   track: TrackType;
@@ -23,6 +24,7 @@ export default function Track({ track, playlist, tracks }: trackTypeProp) {
   const dispatch = useAppDispatch();
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
+  const { toggleLike, isLike } = useLikeTrack(track);
 
   const onClickTrack = () => {
     dispatch(setCurrentTrack(track));
@@ -31,7 +33,7 @@ export default function Track({ track, playlist, tracks }: trackTypeProp) {
   };
 
   const isActive = currentTrack?._id === track._id;
-
+  console.log(isLike);
   return (
     <>
       <div
@@ -75,8 +77,13 @@ export default function Track({ track, playlist, tracks }: trackTypeProp) {
             </Link>
           </div>
           <div className="styles.track__time">
-            <svg className={styles.track__timeSvg}>
-              <use xlinkHref="/Image/icon/sprite.svg#icon-like"></use>
+            <svg
+              className={`${styles.track__timeSvg} ${isLike ? 'liked' : ''}`}
+              onClick={toggleLike}
+            >
+              <use
+                xlinkHref={`/Image/icon/sprite.svg#${isLike ? 'icon-like' : 'icon-dislike'}`}
+              ></use>
             </svg>
             <span className={styles.track__timeText}>
               {formatTimeTime(track.duration_in_seconds)}
