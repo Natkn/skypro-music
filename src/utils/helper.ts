@@ -26,8 +26,26 @@ export function getUniqueValuesByKey(
     } else if (typeof value === 'string') {
       uniqueValues.add(value);
     } else if (typeof value === 'number') {
-      uniqueValues.add(String(value)); 
+      uniqueValues.add(String(value));
     }
   });
   return Array.from(uniqueValues);
 }
+
+export function formatTime(time: number): string {
+  const minutes = Math.floor(time / 60);
+  const inputSeconds = Math.floor(time % 60);
+  const outputSeconds =
+    inputSeconds < 10 ? `0${inputSeconds}` : `${inputSeconds}`;
+
+  return `${minutes}:${outputSeconds}`;
+}
+
+export const getTimePanel = (
+  currentTime: number,
+  totalTime: number | undefined,
+) => {
+  if (totalTime) {
+    return `${formatTime(currentTime)}/${formatTime(totalTime)}`;
+  }
+};

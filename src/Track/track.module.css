@@ -121,3 +121,27 @@
   text-align: right;
   color: #696969;
 }
+
+.waveAnimation {
+  animation: wave 1s infinite linear;
+  fill: #b62ce4;
+  stroke: #fc36f1;
+}
+
+@keyframes wave {
+  0% {
+    transform: scaleY(0.4);
+  }
+  25% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.4);
+  }
+  75% {
+    transform: scaleY(0.8);
+  }
+  100% {
+    transform: scaleY(0.4);
+  }
+}

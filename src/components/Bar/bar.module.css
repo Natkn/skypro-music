@@ -90,6 +90,7 @@
 
 .player__btnPrev {
   margin-right: 23px;
+  cursor: pointer;
 }
 
 .player__btnPrevSvg {
@@ -99,6 +100,7 @@
 
 .player__btnPlay {
   margin-right: 23px;
+  cursor: pointer;
 }
 
 .player__btnPlaySvg {
@@ -110,6 +112,7 @@
 .player__btnNext {
   margin-right: 28px;
   fill: #a53939;
+  cursor: pointer;
 }
 
 .player__btnNextSvg {
@@ -146,6 +149,46 @@
   stroke: #696969;
 }
 
+.player__btnShuffleSvgActive {
+  stroke: #b672ff;
+}
+
+.player__btnLoopSvgActive {
+  stroke: #b672ff;
+}
+
+.progressBarContainer {
+  position: relative;
+}
+
+.volumeContainer {
+  position: relative;
+}
+
+.timeDisplay {
+  color: #b672ff;
+  position: absolute;
+  top: -20px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.volumeDisplay {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  color: #b672ff;
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.volumeVisible {
+  opacity: 1;
+}
 .player__trackPlay {
   display: -webkit-box;
   display: -ms-flexbox;
