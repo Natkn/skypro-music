@@ -15,10 +15,11 @@ import PartyIcon from './PartyIcon';
 
 type trackTypeProp = {
   track: TrackType;
+  tracks: TrackType;
   playlist: TrackType[];
 };
 
-export default function Track({ track, playlist }: trackTypeProp) {
+export default function Track({ track, playlist, tracks }: trackTypeProp) {
   const dispatch = useAppDispatch();
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
@@ -35,7 +36,7 @@ export default function Track({ track, playlist }: trackTypeProp) {
     <>
       <div
         className={styles.playlist__item}
-        key={track._id}
+        key={tracks._id}
         onClick={onClickTrack}
       >
         <div className={styles.playlist__track}>

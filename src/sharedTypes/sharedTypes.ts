@@ -13,7 +13,7 @@ export interface TrackType {
 
 export interface FilterProps {
   data: TrackType[];
-  items: string[];
+  items: TrackType[];
   isOpen: boolean;
   onClose: () => void;
 }

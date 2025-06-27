@@ -7,12 +7,11 @@ type SearchProps = {
   title: string;
 };
 
-export default function Search({ title }: SearchProps) {
+export default function Search({}: SearchProps) {
   const [searchInput, setSearchInput] = useState('');
   const onSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
   };
-  console.log(title);
   return (
     <div className={styles.centerblock__search}>
       <svg className={styles.search__svg}>
