@@ -3,32 +3,46 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './filter.module.css';
 import classNames from 'classnames';
-import { TrackType } from '@/sharedTypes/sharedTypes';
-import { data } from '@/data';
 import FilterItem from '@/FilterItem/filterItem';
 
-interface FilterProps {
-  data: TrackType[];
+interface Track {
+  author: string;
+  genre?: string[] | string;
 }
 
-export default function Filter({}: FilterProps) {
+interface FilterProps {
+  tracks: Track[];
+}
+
+export default function Filter({ tracks }: FilterProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [authors, setAuthors] = useState<string[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
-
   const authorButtonRef = useRef<HTMLDivElement>(null!);
   const yearButtonRef = useRef<HTMLDivElement>(null!);
   const genreButtonRef = useRef<HTMLDivElement>(null!);
 
   useEffect(() => {
-    if (data && data.length > 0) {
-      const uniqueAuthors = [...new Set(data.map((track) => track.author))];
+    if (tracks && tracks.length > 0) {
+      const uniqueAuthors: string[] = [
+        ...new Set(tracks.map((track: Track) => track.author)),
+      ];
       setAuthors(uniqueAuthors);
 
-      const firstGenre = data[0].genre;
-      setGenres(firstGenre);
+      const allGenres: string[] = [];
+      tracks.forEach((track: Track) => {
+        if (track.genre) {
+          if (Array.isArray(track.genre)) {
+            track.genre.forEach((genre: string) => allGenres.push(genre));
+          } else {
+            allGenres.push(track.genre);
+          }
+        }
+      });
+      const uniqueGenres: string[] = [...new Set(allGenres)];
+      setGenres(uniqueGenres);
     }
-  }, []);
+  }, [tracks]);
 
   const handleFilterClick = (filterName: string) => {
     setActiveFilter((prevFilter) =>
@@ -98,22 +112,26 @@ export default function Filter({}: FilterProps) {
             [styles['filter__list--author']]: activeFilter === 'author',
           })}
         >
-          <FilterItem
-            isOpen={activeFilter === 'author'}
-            onClose={() => setActiveFilter(null)}
-            anchorRef={authorButtonRef}
-            filterType="author"
-          >
-            {renderAuthorFilter()}
-          </FilterItem>
+          {activeFilter === 'author' && (
+            <FilterItem
+              isOpen={activeFilter === 'author'}
+              onClose={() => setActiveFilter(null)}
+              anchorRef={authorButtonRef}
+              filterType="author"
+            >
+              {renderAuthorFilter()}
+            </FilterItem>
+          )}
         </div>
       </div>
+
       <div className={styles.filter__list_container}>
         <div
           className={classNames(styles.filter__button, {
             [styles.active]: activeFilter === 'year',
           })}
           onClick={() => handleFilterClick('year')}
+          ref={yearButtonRef}
         >
           году выпуска
         </div>
@@ -123,14 +141,16 @@ export default function Filter({}: FilterProps) {
             [styles['filter__list--year']]: activeFilter === 'year',
           })}
         >
-          <FilterItem
-            isOpen={activeFilter === 'year'}
-            onClose={() => setActiveFilter(null)}
-            anchorRef={yearButtonRef}
-            filterType="year"
-          >
-            {renderYearFilter()}
-          </FilterItem>
+          {activeFilter === 'year' && (
+            <FilterItem
+              isOpen={activeFilter === 'year'}
+              onClose={() => setActiveFilter(null)}
+              anchorRef={yearButtonRef}
+              filterType="year"
+            >
+              {renderYearFilter()}
+            </FilterItem>
+          )}
         </div>
       </div>
 
@@ -150,14 +170,16 @@ export default function Filter({}: FilterProps) {
             [styles['filter__list--genre']]: activeFilter === 'genre',
           })}
         >
-          <FilterItem
-            isOpen={activeFilter === 'genre'}
-            onClose={() => setActiveFilter(null)}
-            anchorRef={genreButtonRef}
-            filterType="genre"
-          >
-            {renderGenreFilter()}
-          </FilterItem>
+          {activeFilter === 'genre' && (
+            <FilterItem
+              isOpen={activeFilter === 'genre'}
+              onClose={() => setActiveFilter(null)}
+              anchorRef={genreButtonRef}
+              filterType="genre"
+            >
+              {renderGenreFilter()}
+            </FilterItem>
+          )}
         </div>
       </div>
     </div>

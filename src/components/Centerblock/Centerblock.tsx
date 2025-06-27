@@ -1,18 +1,39 @@
+'use client';
 import classnames from 'classnames';
 import styles from './centerblock.module.css';
-import { data } from '@/data';
 import Search from '../Search/Search';
-import { getUniqueValuesByKey } from '@/utils/helper';
 import Filter from '@/Filter/filter';
 import Track from '@/Track/track';
+import { useEffect, useState } from 'react';
+import { TrackType } from '@/sharedTypes/sharedTypes';
 
-export default function Centerblock() {
-  console.log(getUniqueValuesByKey(data, 'author'));
+interface CenterblockProps {
+  isLoading: boolean;
+  errorRes: string | null;
+  tracks: TrackType[];
+  playlistName?: string;
+}
+export default function Centerblock({
+  playlistName,
+  errorRes,
+  isLoading,
+  tracks,
+}: CenterblockProps) {
+  const [headerTitle, setHeaderTitle] = useState('Треки');
+
+  useEffect(() => {
+    if (playlistName) {
+      setHeaderTitle(playlistName);
+    } else {
+      setHeaderTitle('Треки');
+    }
+  }, [playlistName]);
+
   return (
     <div className={styles.centerblock}>
-      <Search title="Name" />
-      <h2 className={styles.centerblock__h2}>Треки</h2>
-      <Filter data={data} />
+      <Search title="" />
+      <h2 className={styles.centerblock__h2}>{headerTitle}</h2>
+      <Filter tracks={tracks} />
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
           <div className={classnames(styles.playlistTitle__col, styles.col01)}>
@@ -31,7 +52,18 @@ export default function Centerblock() {
           </div>
         </div>
         <div className={styles.content__playlist}>
-          <Track />
+          {errorRes
+            ? errorRes
+            : isLoading
+              ? 'Loading...'
+              : tracks.map((track) => (
+                  <Track
+                    key={track._id}
+                    track={track}
+                    tracks={track}
+                    playlist={tracks}
+                  />
+                ))}
         </div>
       </div>
     </div>

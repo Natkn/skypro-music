@@ -1,17 +1,26 @@
-import './page.css';
-import styles from './page.module.css';
+'use client';
+import { ReactNode } from 'react';
+import styles from './layout.module.css';
 import Bar from '@/components/Bar/Bar';
 import Navigation from '@/components/Navigation/Navigation';
 import Sidebar from '@/components/Sidebar/Sidebar';
-import Centerblock from '@/components/Centerblock/Centerblock';
+import FetchingTracks from '@/components/FetchingTracks/FetchingTracks';
+import { UseInitAuth } from '@/hooks/useInitAuth';
 
-export default function Home() {
+interface MainLayoutProps {
+  children: ReactNode;
+}
+
+export default function MainLayout({ children }: MainLayoutProps) {
+  UseInitAuth();
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <main className={styles.main}>
+          <FetchingTracks />
+
           <Navigation />
-          <Centerblock />
+          {children}
           <Sidebar />
         </main>
         <Bar />
