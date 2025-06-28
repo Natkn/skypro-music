@@ -1,10 +1,7 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TrackType } from '@/sharedTypes/sharedTypes';
-import {
-  getSelectedTracks,
-  getTrackById,
-} from '@/app/services/tracks/tracksApi';
+import { getSelectedTracks, getTracks } from '@/app/services/tracks/tracksApi';
 import Centerblock from '@/components/Centerblock/Centerblock';
 
 interface PageProps {
@@ -35,14 +32,20 @@ export default function PlaylistPage({ params }: PageProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [tracks, setTracks] = useState<TrackType[]>([]);
   const [playlistData, setPlaylistData] = useState<ApiResponse | null>(null);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+
       try {
         setLoading(true);
-        const playlistResponse = (await getSelectedTracks(
-          id,
-        )) as PlaylistResponse;
+        setErrorMessage(null);
+
+        const playlistResponse = await getSelectedTracks(id);
 
         if (!playlistResponse) {
           throw new Error('Playlist not found!');
@@ -50,26 +53,21 @@ export default function PlaylistPage({ params }: PageProps) {
 
         setPlaylistData(playlistResponse);
 
+        const allTracks = await getTracks();
+
+        if (!allTracks || allTracks.length === 0) {
+          throw new Error('No tracks found!');
+        }
+
         const trackIds: number[] = playlistResponse.items;
-
-        const trackDetails = await Promise.all(
-          trackIds.map(async (trackId) => {
-            const track = await getTrackById(trackId);
-            if (!track) {
-              console.warn(`Track with ID ${trackId} not found`);
-              return null;
-            }
-            return track;
-          }),
+        const filteredTracks = allTracks.filter((track) =>
+          trackIds.includes(track._id),
         );
 
-        const validTracks = trackDetails.filter(
-          (track: TrackType | null): track is TrackType => track !== null,
-        );
-        setLoading(false);
-        setTracks(validTracks);
+        setTracks(filteredTracks);
         setErrorMessage(null);
-        console.error('Error fetching data:');
+      } catch (error) {
+        console.error('Error fetching data:', error);
         setErrorMessage(
           errorMessage || 'An error occurred while fetching data.',
         );
@@ -78,8 +76,22 @@ export default function PlaylistPage({ params }: PageProps) {
       }
     };
 
-    fetchData();
-  }, [errorMessage, id]);
+    if (id) {
+      fetchData();
+    }
+  }, [id, errorMessage]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (errorMessage) {
+    return <div>Error: {errorMessage}</div>;
+  }
+
+  if (!playlistData || tracks.length === 0) {
+    return <div>No tracks found for this playlist.</div>;
+  }
 
   const fetchTracks = async (): Promise<TrackType[]> => {
     return Promise.resolve(tracks);

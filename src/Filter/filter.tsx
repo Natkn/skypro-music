@@ -16,6 +16,7 @@ export default function Filter({}) {
   const authorButtonRef = useRef<HTMLDivElement>(null!);
   const yearButtonRef = useRef<HTMLDivElement>(null!);
   const genreButtonRef = useRef<HTMLDivElement>(null!);
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +32,10 @@ export default function Filter({}) {
       }
     };
 
-    fetchData();
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      fetchData();
+    }
   }, []);
 
   useEffect(() => {
