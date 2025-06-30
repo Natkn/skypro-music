@@ -2,8 +2,8 @@
 import Image from 'next/image';
 import styles from './Navigation.module.css';
 import Link from 'next/link';
-import { useState } from 'react';
-import { useAppDispatch } from '@/store/store';
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 import { clearUserData } from '@/store/fearures/authSlice';
 import { useRouter } from 'next/navigation';
 
@@ -14,8 +14,15 @@ export default function Navigation() {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { userData } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    console.log('userData changed:', userData);
+  }, [userData]);
 
   const logout = () => {
+    console.log('logout function called');
     dispath(clearUserData());
     router.push('/auth/signin');
   };
@@ -50,9 +57,15 @@ export default function Navigation() {
             </Link>
           </li>
           <li className={styles.menu__item}>
-            <p onClick={logout} className={styles.menu__link}>
-              Войти
-            </p>
+            {isAuthenticated ? (
+              <p onClick={logout} className={styles.menu__link}>
+                Выйти
+              </p>
+            ) : (
+              <Link href="/auth/signin" className={styles.menu__link}>
+                Войти
+              </Link>
+            )}
           </li>
         </ul>
       </div>

@@ -68,12 +68,16 @@ export default function Signin() {
             console.log(error.response.data);
             console.log(error.response.status);
             console.log(error.response.headers);
-            setErrorMessage(error.response.data.message);
+            setErrorMessage(
+              error.response.data.message || 'Authentication failed',
+            );
           } else if (error.request) {
-            setErrorMessage(' Network error,try again');
+            setErrorMessage('Network error, try again');
           } else {
             setErrorMessage('Unknown error');
           }
+        } else {
+          setErrorMessage('An unexpected error occurred');
         }
       })
       .finally(() => {

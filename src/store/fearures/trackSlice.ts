@@ -11,7 +11,7 @@ type initialStateType = {
   allTracks: TrackType[];
   fetchError: null | string;
   fetchIsLoading: boolean;
-  favTracks: TrackType[];
+  favoriteTracks: TrackType[];
 };
 
 const initialState: initialStateType = {
@@ -24,7 +24,7 @@ const initialState: initialStateType = {
   allTracks: [],
   fetchError: null,
   fetchIsLoading: true,
-  favTracks: [],
+  favoriteTracks: [],
 };
 
 const trackSlice = createSlice({
@@ -74,17 +74,19 @@ const trackSlice = createSlice({
     setFetchLoading: (state, action: PayloadAction<boolean>) => {
       state.fetchIsLoading = action.payload;
     },
-    setFavTrack: (state, action: PayloadAction<TrackType[]>) => {
-      state.favTracks = action.payload;
+    setFavoriteTrack: (state, action: PayloadAction<TrackType[]>) => {
+      state.favoriteTracks = action.payload;
     },
     setDelFavTrack: (state, action: PayloadAction<TrackType[]>) => {
-      state.favTracks = action.payload;
+      state.favoriteTracks = action.payload;
     },
     addLikedTracks: (state, action: PayloadAction<TrackType>) => {
-      state.favTracks = [...state.favTracks, action.payload];
+      state.favoriteTracks = [...state.favoriteTracks, action.payload];
     },
     removeLikedTracks: (state, action: PayloadAction<TrackType>) => {
-      state.favTracks = [...state.favTracks, action.payload];
+      state.favoriteTracks = state.favoriteTracks.filter(
+        (track) => track._id !== action.payload._id,
+      );
     },
   },
 });
@@ -100,7 +102,7 @@ export const {
   setAllTracks,
   setFetchError,
   setFetchLoading,
-  setFavTrack,
+  setFavoriteTrack,
   setDelFavTrack,
   addLikedTracks,
   removeLikedTracks,

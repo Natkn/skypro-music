@@ -13,14 +13,15 @@ import {
 import classNames from 'classnames';
 import PartyIcon from './PartyIcon';
 import { useLikeTrack } from '@/hooks/useLikeTracks';
+import React from 'react';
 
 type trackTypeProp = {
   track: TrackType;
-  tracks: TrackType;
+  tracks: TrackType[];
   playlist: TrackType[];
 };
 
-export default function Track({ track, playlist, tracks }: trackTypeProp) {
+function Track({ track, playlist }: trackTypeProp) {
   const dispatch = useAppDispatch();
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
@@ -33,12 +34,12 @@ export default function Track({ track, playlist, tracks }: trackTypeProp) {
   };
 
   const isActive = currentTrack?._id === track._id;
-  console.log(isLike);
+
   return (
     <>
       <div
         className={styles.playlist__item}
-        key={tracks._id}
+        key={track._id}
         onClick={onClickTrack}
       >
         <div className={styles.playlist__track}>
@@ -76,15 +77,17 @@ export default function Track({ track, playlist, tracks }: trackTypeProp) {
               {track.album}
             </Link>
           </div>
-          <div className="styles.track__time">
-            <svg
-              className={`${styles.track__timeSvg} ${isLike ? 'liked' : ''}`}
-              onClick={toggleLike}
-            >
-              <use
-                xlinkHref={`/Image/icon/sprite.svg#${isLike ? 'icon-like' : 'icon-dislike'}`}
-              ></use>
-            </svg>
+          <div className={styles.track__time}>
+            <div className={styles.track__like}>
+              <svg
+                onClick={toggleLike}
+                className={`${styles.track__timeSvg} ${isLike ? 'liked' : ''}`}
+              >
+                <use
+                  xlinkHref={`/Image/icon/sprite.svg#${isLike ? 'icon-like' : 'icon-dislike'}`}
+                ></use>
+              </svg>
+            </div>
             <span className={styles.track__timeText}>
               {formatTimeTime(track.duration_in_seconds)}
             </span>
@@ -94,3 +97,4 @@ export default function Track({ track, playlist, tracks }: trackTypeProp) {
     </>
   );
 }
+export default React.memo(Track);

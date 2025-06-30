@@ -31,9 +31,9 @@ export const getSelectedTracks = async (
   }
 };
 
-export const addLike = (access: string, _id: number) => {
+export const addLike = (access: string, id: number) => {
   return axios.post(
-    BASE_URL + `/catalog/track/${_id}/favorite`,
+    BASE_URL + `/catalog/track/${id}/favorite`,
     {},
     {
       headers: {
@@ -43,8 +43,8 @@ export const addLike = (access: string, _id: number) => {
   );
 };
 
-export const removeLike = (access: string, _id: number) => {
-  return axios.delete(BASE_URL + `/catalog/track/${_id}/favorite`, {
+export const removeLike = (access: string, id: number) => {
+  return axios.delete(BASE_URL + `/catalog/track/${id}/favorite`, {
     headers: {
       Authorization: `Bearer ${access}`,
     },

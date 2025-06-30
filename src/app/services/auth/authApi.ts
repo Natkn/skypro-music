@@ -12,12 +12,20 @@ type authUserReturn = {
   _id: number;
 };
 
-export const authUser = (data: authUserProps): Promise<authUserReturn> => {
-  return axios.post(BASE_URL + '/user/login', data, {
-    headers: {
-      'Content-type': 'application/json',
-    },
-  });
+export const authUser = async (
+  data: authUserProps,
+): Promise<authUserReturn> => {
+  try {
+    const response = await axios.post(BASE_URL + '/user/login', data, {
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при аутентификации:', error);
+    throw error;
+  }
 };
 
 type registerUserProps = {
@@ -52,12 +60,12 @@ type refreshTokenType = {
 
 type tokensType = accessTokenType & refreshTokenType;
 
-export const getTokens = (data: authUserProps): Promise<tokensType> => {
-  return axios.post(BASE_URL + '/user/token/', data).then((res) => res.data);
+export const getTokens = async (data: authUserProps): Promise<tokensType> => {
+  const res = await axios.post(BASE_URL + '/user/token/', data);
+  return res.data;
 };
 
-export const refreshToken = (refresh: string): Promise<tokensType> => {
-  return axios
-    .post(BASE_URL + '/user/token/refresh', { refresh })
-    .then((res) => res.data);
+export const refreshToken = async (refresh: string): Promise<tokensType> => {
+  const res = await axios.post(BASE_URL + '/user/token/refresh', { refresh });
+  return res.data;
 };

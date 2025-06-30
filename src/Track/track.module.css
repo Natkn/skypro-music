@@ -130,6 +130,10 @@
   color: #696969;
 }
 
+.track__like {
+  font-style: normal;
+}
+
 .waveAnimation {
   animation: wave 1s infinite linear;
   fill: #b62ce4;
