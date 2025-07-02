@@ -52,7 +52,7 @@ export default function Navigation() {
             </Link>
           </li>
           <li className={styles.menu__item}>
-            <Link href="#" className={styles.menu__link}>
+            <Link href="/music/favourite" className={styles.menu__link}>
               Мой плейлист
             </Link>
           </li>

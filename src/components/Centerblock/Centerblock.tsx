@@ -60,7 +60,7 @@ export default function Centerblock({
                   <Track
                     key={track._id}
                     track={track}
-                    tracks={track}
+                    tracks={tracks}
                     playlist={tracks}
                   />
                 ))}

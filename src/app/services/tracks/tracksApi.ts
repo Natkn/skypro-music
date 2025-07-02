@@ -51,6 +51,25 @@ export const removeLike = (access: string, id: number) => {
   });
 };
 
+export const getFavoriteTracks = async (
+  access: string,
+): Promise<TrackType[]> => {
+  try {
+    const response = await axios.get<TrackType[]>(
+      `${BASE_URL}/catalog/track/favorite/all/`,
+      {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching favorite tracks:', error);
+    throw error;
+  }
+};
+
 /*export const getTrackById = async (
   trackId: number,
 ): Promise<TrackType | null> => {

@@ -113,12 +113,14 @@
   fill: transparent;
   stroke: #696969;
   cursor: pointer;
+  transition:
+    fill 0.3s ease,
+    stroke 0.3s ease;
 }
 
-.track__timeSvg.liked {
-  fill: red;
-  stroke: #ffd001;
-  cursor: pointer;
+.liked {
+  fill: #a537fd;
+  stroke: #a537fd;
 }
 
 .track__timeText {

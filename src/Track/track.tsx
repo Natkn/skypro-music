@@ -81,7 +81,7 @@ function Track({ track, playlist }: trackTypeProp) {
             <div className={styles.track__like}>
               <svg
                 onClick={toggleLike}
-                className={`${styles.track__timeSvg} ${isLike ? 'liked' : ''}`}
+                className={`${styles.track__timeSvg} ${isLike ? styles.liked : ''}`}
               >
                 <use
                   xlinkHref={`/Image/icon/sprite.svg#${isLike ? 'icon-like' : 'icon-dislike'}`}
