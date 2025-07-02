@@ -2,6 +2,7 @@ import axios from 'axios';
 import { BASE_URL } from './constants';
 import { TrackType } from '@/sharedTypes/sharedTypes';
 import { PlaylistResponse } from '@/app/music/category/[id]/page';
+import { ApiResponse } from '@/app/music/favourite/page';
 
 export const getTracks = (): Promise<TrackType[]> => {
   return axios(BASE_URL + `/catalog/track/all/`).then((res) => {
@@ -31,9 +32,10 @@ export const getSelectedTracks = async (
   }
 };
 
-export const addLike = (access: string, id: number) => {
+export const addLike = (access: string, _id: number) => {
+  const fullUrl = BASE_URL + `/catalog/track/${_id}/favorite`;
   return axios.post(
-    BASE_URL + `/catalog/track/${id}/favorite`,
+    fullUrl,
     {},
     {
       headers: {
@@ -53,10 +55,10 @@ export const removeLike = (access: string, id: number) => {
 
 export const getFavoriteTracks = async (
   access: string,
-): Promise<TrackType[]> => {
+): Promise<ApiResponse> => {
   try {
-    const response = await axios.get<TrackType[]>(
-      `${BASE_URL}/catalog/track/favorite/all/`,
+    const response = await axios.get<ApiResponse>(
+      BASE_URL + `/catalog/track/favorite/all/`,
       {
         headers: {
           Authorization: `Bearer ${access}`,

@@ -5,7 +5,7 @@ import { addLikedTracks, removeLikedTracks } from '@/store/fearures/trackSlice';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { withReauth } from '@/utils/withReault';
 import { AxiosError } from 'axios';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type returnTypeHook = {
   isLoading: boolean;
@@ -22,19 +22,22 @@ export const useLikeTrack = (track: TrackType | null): returnTypeHook => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (track?._id) {
+      setIsLike(favoriteTracks.some((t) => t._id === track._id));
+    } else {
+      setIsLike(false);
+    }
+  }, [favoriteTracks, track]);
+
   const toggleLike = useCallback(
     (event: React.MouseEvent<SVGSVGElement>) => {
       event.stopPropagation();
-      setIsLike(!isLike);
-      if (!access) {
-        setErrorMsg('Нет авторизации');
-        return;
-      }
-
-      if (!track?._id) {
+      if (!track || !track._id) {
         setErrorMsg('Не удалось определить идентификатор трека.');
         return;
       }
+
       const trackId = track._id;
 
       const isCurrentlyLiked = favoriteTracks.some((t) => t._id === trackId);
@@ -46,13 +49,20 @@ export const useLikeTrack = (track: TrackType | null): returnTypeHook => {
       setErrorMsg(null);
 
       withReauth(
-        (newToken) => actionApi(newToken || access, track._id),
+        async (newToken) => {
+          const token = newToken || access;
+
+          try {
+            await actionApi(token, trackId);
+            dispatch(actionSlice(track));
+            setIsLike(!isLike);
+          } catch (error) {
+            throw error;
+          }
+        },
         refresh,
         dispatch,
       )
-        .then(() => {
-          dispatch(actionSlice(track));
-        })
         .catch((error) => {
           if (error instanceof AxiosError) {
             setErrorMsg(

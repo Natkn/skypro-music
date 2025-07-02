@@ -34,7 +34,6 @@ function Track({ track, playlist }: trackTypeProp) {
   };
 
   const isActive = currentTrack?._id === track._id;
-
   return (
     <>
       <div

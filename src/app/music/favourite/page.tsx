@@ -6,6 +6,12 @@ import { useRouter } from 'next/navigation';
 import Centerblock from '@/components/Centerblock/Centerblock';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { TrackType } from '@/sharedTypes/sharedTypes';
+import { setFavoriteTrack } from '@/store/fearures/trackSlice';
+
+export interface ApiResponse {
+  success: boolean;
+  data: TrackType[];
+}
 
 export default function FavoriteTracksPage() {
   const dispatch = useAppDispatch();
@@ -16,45 +22,46 @@ export default function FavoriteTracksPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Проверяем наличие access токена
     if (!access) {
-      // Если токена нет, возможно, стоит перенаправить на страницу логина или домашнюю
-      // router.push('/login'); // Пример перенаправления
-      console.warn('Нет access токена, не могу загрузить избранные треки.');
-      setErrorMessage('Для просмотра избранных треков войдите в аккаунт.');
+      setErrorMessage('Нет избранных треков.');
       setLoading(false);
       return;
     }
-
     setLoading(true);
     setErrorMessage(null);
 
     getFavoriteTracks(access)
-      .then((data: TrackType[]) => {
-        // Указываем тип данных для лучшей читаемости
-        setTracks(data);
-        // Исправлено: используем правильное действие setFavoriteTrack
-        dispatch(getFavoriteTracks(access));
+      .then((response: ApiResponse) => {
+        if (response && response.success && Array.isArray(response.data)) {
+          setTracks(response.data);
+          dispatch(setFavoriteTrack(response.data));
+        } else {
+          console.error(
+            'getFavoriteTracks не вернул массив в поле data:',
+            response,
+          );
+          setTracks([]);
+          setErrorMessage(
+            'Не удалось загрузить любимые треки (неверный формат данных).',
+          );
+        }
       })
       .catch((error) => {
         console.error('Ошибка при получении избранных треков:', error);
-        setErrorMessage('Не удалось загрузить любимые треки.'); // Сообщение об ошибке
+        setErrorMessage('Не удалось загрузить любимые треки.');
+        setTracks([]);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [access, dispatch, router]); // router добавлен в зависимости, если используется для навигации
+  }, [access, dispatch, router]);
 
   return (
     <Centerblock
       tracks={tracks}
       isLoading={loading}
       errorRes={errorMessage}
-      // Если playlistData удалено, передаем статическое название
       playlistName="Мои треки"
-      // Или если setPlaylistData должно было использоваться для чего-то другого,
-      // убедитесь, что оно передано правильно, но судя по всему, это не так.
-      // playlistName={playlistData?.name}
     />
   );
 }

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { clearUserData } from '@/store/fearures/authSlice';
 import { useRouter } from 'next/navigation';
+import { setDelFavTrack } from '@/store/fearures/trackSlice';
 
 export default function Navigation() {
   const dispath = useAppDispatch();
@@ -17,13 +18,11 @@ export default function Navigation() {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const { userData } = useAppSelector((state) => state.auth);
 
-  useEffect(() => {
-    console.log('userData changed:', userData);
-  }, [userData]);
+  useEffect(() => {}, [userData]);
 
   const logout = () => {
-    console.log('logout function called');
     dispath(clearUserData());
+    dispath(setDelFavTrack([]));
     router.push('/auth/signin');
   };
   return (
@@ -47,7 +46,7 @@ export default function Navigation() {
       <div className={`${styles.nav__menu} ${isMenuOpen ? styles.open : ''}`}>
         <ul className={styles.menu__list}>
           <li className={styles.menu__item}>
-            <Link href="#" className={styles.menu__link}>
+            <Link href="/music/main" className={styles.menu__link}>
               Главное
             </Link>
           </li>
