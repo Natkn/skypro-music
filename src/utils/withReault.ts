@@ -7,10 +7,10 @@ export const withReauth = async <T>(
   apiFunction: (access: string) => Promise<T>,
   refresh: string,
   dispatch: AppDispatch,
-  initialAccess: string | null  // Принимаем токен из компонента
+  initialAccess: string | null, // Принимаем токен из компонента
 ): Promise<T> => {
   try {
-    return await apiFunction(initialAccess || '');  // Передаем токен
+    return await apiFunction(initialAccess || ''); // Передаем токен
   } catch (error) {
     const axiosError = error as AxiosError;
 
