@@ -1,6 +1,10 @@
 import { addLike, removeLike } from '@/app/services/tracks/tracksApi';
 import { TrackType } from '@/sharedTypes/sharedTypes';
-import { addLikedTracks, removeLikedTracks } from '@/store/fearures/trackSlice';
+import {
+  addLikedTracks,
+  removeLikedTracks,
+  setFavoriteTrack,
+} from '@/store/fearures/trackSlice';
 
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { withReauth } from '@/utils/withReault';
@@ -21,6 +25,12 @@ export const useLikeTrack = (track: TrackType | null): returnTypeHook => {
   const [isLike, setIsLike] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem('favoriteTracks');
+    const initialFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+    dispatch(setFavoriteTrack(initialFavorites));
+  }, [dispatch]);
 
   useEffect(() => {
     if (track?._id) {
@@ -62,6 +72,7 @@ export const useLikeTrack = (track: TrackType | null): returnTypeHook => {
         },
         refresh,
         dispatch,
+        access,
       )
         .catch((error) => {
           if (error instanceof AxiosError) {

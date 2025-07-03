@@ -76,16 +76,32 @@ const trackSlice = createSlice({
     },
     setFavoriteTrack: (state, action: PayloadAction<TrackType[]>) => {
       state.favoriteTracks = action.payload;
+      localStorage.setItem(
+        'favoriteTracks',
+        JSON.stringify(state.favoriteTracks),
+      );
     },
     setDelFavTrack: (state, action: PayloadAction<TrackType[]>) => {
       state.favoriteTracks = action.payload;
+      localStorage.setItem(
+        'favoriteTracks',
+        JSON.stringify(state.favoriteTracks),
+      );
     },
     addLikedTracks: (state, action: PayloadAction<TrackType>) => {
-      state.favoriteTracks = [...state.favoriteTracks, action.payload];
+      state.favoriteTracks.push(action.payload);
+      localStorage.setItem(
+        'favoriteTracks',
+        JSON.stringify(state.favoriteTracks),
+      );
     },
     removeLikedTracks: (state, action: PayloadAction<TrackType>) => {
       state.favoriteTracks = state.favoriteTracks.filter(
         (track) => track._id !== action.payload._id,
+      );
+      localStorage.setItem(
+        'favoriteTracks',
+        JSON.stringify(state.favoriteTracks),
       );
     },
   },
