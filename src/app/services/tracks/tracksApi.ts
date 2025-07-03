@@ -31,7 +31,7 @@ export const getSelectedTracks = async (
   }
 };
 
-export const getTrackById = async (
+/*export const getTrackById = async (
   trackId: number,
 ): Promise<TrackType | null> => {
   try {
@@ -51,3 +51,4 @@ export const getTrackById = async (
     return null;
   }
 };
+*/
