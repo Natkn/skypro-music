@@ -8,6 +8,10 @@ type initialStateType = {
   isShuffle: boolean;
   shufflePlaylist: TrackType[];
   isLoop: boolean;
+  allTracks: TrackType[];
+  fetchError: null | string;
+  fetchIsLoading: boolean;
+  favoriteTracks: TrackType[];
 };
 
 const initialState: initialStateType = {
@@ -17,6 +21,10 @@ const initialState: initialStateType = {
   isShuffle: false,
   shufflePlaylist: [],
   isLoop: false,
+  allTracks: [],
+  fetchError: null,
+  fetchIsLoading: true,
+  favoriteTracks: [],
 };
 
 const trackSlice = createSlice({
@@ -57,6 +65,45 @@ const trackSlice = createSlice({
     toggleLoop: (state) => {
       state.isLoop = !state.isLoop;
     },
+    setAllTracks: (state, action: PayloadAction<TrackType[]>) => {
+      state.allTracks = action.payload;
+    },
+    setFetchError: (state, action: PayloadAction<string>) => {
+      state.fetchError = action.payload;
+    },
+    setFetchLoading: (state, action: PayloadAction<boolean>) => {
+      state.fetchIsLoading = action.payload;
+    },
+    setFavoriteTrack: (state, action: PayloadAction<TrackType[]>) => {
+      state.favoriteTracks = action.payload;
+      localStorage.setItem(
+        'favoriteTracks',
+        JSON.stringify(state.favoriteTracks),
+      );
+    },
+    setDelFavTrack: (state, action: PayloadAction<TrackType[]>) => {
+      state.favoriteTracks = action.payload;
+      localStorage.setItem(
+        'favoriteTracks',
+        JSON.stringify(state.favoriteTracks),
+      );
+    },
+    addLikedTracks: (state, action: PayloadAction<TrackType>) => {
+      state.favoriteTracks.push(action.payload);
+      localStorage.setItem(
+        'favoriteTracks',
+        JSON.stringify(state.favoriteTracks),
+      );
+    },
+    removeLikedTracks: (state, action: PayloadAction<TrackType>) => {
+      state.favoriteTracks = state.favoriteTracks.filter(
+        (track) => track._id !== action.payload._id,
+      );
+      localStorage.setItem(
+        'favoriteTracks',
+        JSON.stringify(state.favoriteTracks),
+      );
+    },
   },
 });
 
@@ -68,5 +115,12 @@ export const {
   setPrevTrack,
   toggleShuffle,
   toggleLoop,
+  setAllTracks,
+  setFetchError,
+  setFetchLoading,
+  setFavoriteTrack,
+  setDelFavTrack,
+  addLikedTracks,
+  removeLikedTracks,
 } = trackSlice.actions;
 export const trackSliceReducer = trackSlice.reducer;

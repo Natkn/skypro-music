@@ -1,8 +1,9 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { TrackType } from '@/sharedTypes/sharedTypes';
-import { getSelectedTracks, getTracks } from '@/app/services/tracks/tracksApi';
+import { getSelectedTracks } from '@/app/services/tracks/tracksApi';
 import Centerblock from '@/components/Centerblock/Centerblock';
+import { useAppSelector } from '@/store/store';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -33,6 +34,7 @@ export default function PlaylistPage({ params }: PageProps) {
   const [tracks, setTracks] = useState<TrackType[]>([]);
   const [playlistData, setPlaylistData] = useState<ApiResponse | null>(null);
   const isFirstRender = useRef(true);
+  const { allTracks } = useAppSelector((state) => state.tracks);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +47,10 @@ export default function PlaylistPage({ params }: PageProps) {
         setLoading(true);
         setErrorMessage(null);
 
+        if (!allTracks || allTracks.length === 0) {
+          throw new Error('No tracks found in Redux Store!');
+        }
+
         const playlistResponse = await getSelectedTracks(id);
 
         if (!playlistResponse) {
@@ -53,15 +59,9 @@ export default function PlaylistPage({ params }: PageProps) {
 
         setPlaylistData(playlistResponse);
 
-        const allTracks = await getTracks();
-
-        if (!allTracks || allTracks.length === 0) {
-          throw new Error('No tracks found!');
-        }
-
-        const trackIds: number[] = playlistResponse.items;
+        const trackIds: string[] = playlistResponse.items.map(String);
         const filteredTracks = allTracks.filter((track) =>
-          trackIds.includes(track._id),
+          trackIds.includes(track._id.toString()),
         );
 
         setTracks(filteredTracks);
@@ -79,7 +79,7 @@ export default function PlaylistPage({ params }: PageProps) {
     if (id) {
       fetchData();
     }
-  }, [id, errorMessage]);
+  }, [id, errorMessage, allTracks]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -93,17 +93,12 @@ export default function PlaylistPage({ params }: PageProps) {
     return <div>No tracks found for this playlist.</div>;
   }
 
-  const fetchTracks = async (): Promise<TrackType[]> => {
-    return Promise.resolve(tracks);
-  };
   return (
     <>
       <Centerblock
         tracks={tracks}
-        loading={loading}
-        errorMessage={errorMessage}
-        setLoading={setLoading}
-        fetchTracks={fetchTracks}
+        isLoading={loading}
+        errorRes={errorMessage}
         playlistName={playlistData?.name}
       />
     </>

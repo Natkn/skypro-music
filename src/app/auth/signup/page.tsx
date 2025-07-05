@@ -53,6 +53,7 @@ export default function SignUp() {
       return;
     }
     setIsLoading(true);
+
     try {
       const response = await registerUser({ email, password, username });
       localStorage.setItem('authToken', JSON.stringify(response));

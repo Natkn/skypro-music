@@ -293,18 +293,23 @@
   height: 12px;
   fill: transparent;
   stroke: #696969;
+  cursor: pointer;
 }
 
 .trackPlay__dislike {
   margin-left: 28.5px;
 }
 
+.liked {
+  fill: #a537fd;
+  stroke: #a537fd;
+}
 .trackPlay__dislikeSvg {
   width: 14.34px;
   height: 13px;
   fill: transparent;
   stroke: #696969;
-  visibility: hidden;
+  cursor: pointer;
 }
 
 .volume__content {

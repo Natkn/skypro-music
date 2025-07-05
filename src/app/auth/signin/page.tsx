@@ -4,11 +4,18 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { authUser } from '@/app/services/auth/authApi';
+import { authUser, getTokens } from '@/app/services/auth/authApi';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch } from '@/store/store';
+import {
+  setAccessToken,
+  setRefreshToken,
+  setUsername,
+} from '@/store/fearures/authSlice';
 
 export default function Signin() {
+  const dispath = useAppDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -42,9 +49,13 @@ export default function Signin() {
     }
     setisLoading(true);
     authUser({ email, password })
-      .then((userData) => {
-        localStorage.setItem('authToken', JSON.stringify(userData));
-
+      .then(() => {
+        dispath(setUsername(email));
+        return getTokens({ email, password });
+      })
+      .then((res) => {
+        dispath(setAccessToken(res.access));
+        dispath(setRefreshToken(res.refresh));
         if (router) {
           router.push('/music/main');
         } else {
@@ -57,12 +68,16 @@ export default function Signin() {
             console.log(error.response.data);
             console.log(error.response.status);
             console.log(error.response.headers);
-            setErrorMessage(error.response.data.message);
+            setErrorMessage(
+              error.response.data.message || 'Authentication failed',
+            );
           } else if (error.request) {
-            setErrorMessage(' Network error,try again');
+            setErrorMessage('Network error, try again');
           } else {
             setErrorMessage('Unknown error');
           }
+        } else {
+          setErrorMessage('An unexpected error occurred');
         }
       })
       .finally(() => {

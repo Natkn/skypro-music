@@ -68,6 +68,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   height: 500px;
+  color: white;
 }
 
 .content__playlist::-webkit-scrollbar {
