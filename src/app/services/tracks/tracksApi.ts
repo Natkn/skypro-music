@@ -45,8 +45,8 @@ export const addLike = (access: string, _id: number) => {
   );
 };
 
-export const removeLike = (access: string, id: number) => {
-  return axios.delete(BASE_URL + `/catalog/track/${id}/favorite`, {
+export const removeLike = (access: string, _id: number) => {
+  return axios.delete(BASE_URL + `/catalog/track/${_id}/favorite`, {
     headers: {
       Authorization: `Bearer ${access}`,
     },
