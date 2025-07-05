@@ -2,9 +2,10 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { getFavoriteTracks } from '../tracks/tracksApi';
-import { useAppDispatch } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 import { ApiResponse } from '@/app/music/favourite/page';
 import { setFavoriteTrack } from '@/store/fearures/trackSlice';
+import { refreshToken } from './authApi';
 
 interface AuthContextProps {
   user: { username: string } | null;
@@ -30,18 +31,50 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const dispatch = useAppDispatch();
+  const { favoriteTracks } = useAppSelector((state) => state.tracks);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
+    const refresh = localStorage.getItem('refreshToken');
+
     if (token) {
       setAccessToken(token);
       setIsLoggedIn(true);
+    }
 
+    const refreshAccessToken = async () => {
+      if (refresh) {
+        try {
+          const newAccessTokenResponse = await refreshToken(refresh);
+          const newAccessToken = newAccessTokenResponse.access;
+
+          setAccessToken(newAccessToken);
+          localStorage.setItem('authToken', newAccessToken);
+        } catch (error) {
+          console.error('Ошибка при автоматическом обновлении токена:', error);
+        }
+      }
+    };
+
+    const isTokenExpired = () => {
+      return false;
+    };
+
+    if (isTokenExpired() && refresh) {
+      refreshAccessToken();
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
+  }, [favoriteTracks]);
+
+  useEffect(() => {
+    if (accessToken) {
       const fetchData = async () => {
         try {
-          const response: ApiResponse = await getFavoriteTracks(token);
+          const response: ApiResponse = await getFavoriteTracks(accessToken);
           if (response && response.success && Array.isArray(response.data)) {
-            console.log('Favorites from API:', response.data); // Log the data
             dispatch(setFavoriteTrack(response.data));
           } else {
             console.error('Ошибка при получении избранных треков:', response);
@@ -53,29 +86,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       fetchData();
     }
-    // Load favorite tracks from localStorage
-    const loadFromLocalStorage = () => {
-      const storedFavorites = localStorage.getItem('favoriteTracks');
-      console.log('Favorites from localStorage:', storedFavorites); // Log the data
-      if (storedFavorites) {
-        try {
-          const initialFavorites = JSON.parse(storedFavorites);
-          console.log('Parsed favorites from localStorage:', initialFavorites); // Log the parsed data
-          dispatch(setFavoriteTrack(initialFavorites));
-        } catch (error) {
-          console.error(
-            'Ошибка при разборе избранных треков из localStorage:',
-            error,
-          );
-        }
-      }
-    };
-
-    loadFromLocalStorage(); // Load immediately
-  }, [dispatch]);
+  }, [accessToken, dispatch]);
 
   const signOut = async () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
     setAccessToken(null);
     setIsLoggedIn(false);
     setUser(null);

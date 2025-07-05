@@ -26,7 +26,6 @@ export default function FavoriteTracksPage() {
           const response: ApiResponse = await getFavoriteTracks(access);
 
           if (response && response.success && Array.isArray(response.data)) {
-            // Просто используем данные с сервера
             dispatch(setFavoriteTrack(response.data));
           } else {
             console.error(
@@ -50,7 +49,6 @@ export default function FavoriteTracksPage() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [access, dispatch]);
 
