@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './filter.module.css';
 import classNames from 'classnames';
 import FilterItem from '@/FilterItem/filterItem';
+import { setFilterAuthors, setFilterGenres } from '@/store/fearures/trackSlice';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 
 interface Track {
   author: string;
@@ -21,7 +23,11 @@ export default function Filter({ tracks }: FilterProps) {
   const authorButtonRef = useRef<HTMLDivElement>(null!);
   const yearButtonRef = useRef<HTMLDivElement>(null!);
   const genreButtonRef = useRef<HTMLDivElement>(null!);
-
+  const selectedAuthors = useAppSelector(
+    (state) => state.tracks.filters.authors,
+  );
+  const selectedGenres = useAppSelector((state) => state.tracks.filters.genres);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (tracks && tracks.length > 0) {
       const uniqueAuthors: string[] = [
@@ -80,17 +86,37 @@ export default function Filter({ tracks }: FilterProps) {
 
   const renderAuthorFilter = () =>
     authors.map((author) => (
-      <div key={author} className={styles.filter__item}>
+      <div
+        key={author}
+        className={classNames(styles.filter__item, {
+          [styles.selected]: selectedAuthors.includes(author),
+        })}
+        onClick={() => onSelectAuthor(author)}
+      >
         {author}
       </div>
     ));
 
   const renderGenreFilter = () =>
     genres.map((genre) => (
-      <div key={genre} className={styles.filter__item}>
+      <div
+        key={genre}
+        className={classNames(styles.filter__item, {
+          [styles.selected]: selectedGenres.includes(genre),
+        })}
+        onClick={() => onSelectGenre(genre)}
+      >
         {genre}
       </div>
     ));
+
+  const onSelectAuthor = (author: string) => {
+    dispatch(setFilterAuthors(author));
+  };
+
+  const onSelectGenre = (genre: string) => {
+    dispatch(setFilterGenres(genre));
+  };
 
   return (
     <div className={styles.centerblock__filter}>
@@ -118,6 +144,7 @@ export default function Filter({ tracks }: FilterProps) {
               onClose={() => setActiveFilter(null)}
               anchorRef={authorButtonRef}
               filterType="author"
+              onSelect={onSelectAuthor}
             >
               {renderAuthorFilter()}
             </FilterItem>
@@ -147,6 +174,7 @@ export default function Filter({ tracks }: FilterProps) {
               onClose={() => setActiveFilter(null)}
               anchorRef={yearButtonRef}
               filterType="year"
+              onSelect={onSelectAuthor}
             >
               {renderYearFilter()}
             </FilterItem>
@@ -176,6 +204,7 @@ export default function Filter({ tracks }: FilterProps) {
               onClose={() => setActiveFilter(null)}
               anchorRef={genreButtonRef}
               filterType="genre"
+              onSelect={onSelectGenre}
             >
               {renderGenreFilter()}
             </FilterItem>
