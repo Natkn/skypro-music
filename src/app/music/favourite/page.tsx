@@ -55,6 +55,7 @@ export default function FavoriteTracksPage() {
   return (
     <Centerblock
       tracks={favoriteTracks}
+      pagePlaylist={favoriteTracks}
       isLoading={loading}
       errorRes={errorMessage}
       playlistName="Мои треки"

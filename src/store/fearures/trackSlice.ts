@@ -138,7 +138,37 @@ const trackSlice = createSlice({
           state.filters.authors.includes(track.author),
       );
     },
+    setSortByYear: (state, action: PayloadAction<string>) => {
+      const sortOrder = action.payload;
+      state.filters.years = sortOrder;
 
+      if (sortOrder === 'newest') {
+        state.filteredTracks = [...state.filteredTracks].sort((a, b) => {
+          const yearA = parseInt(a.release_date.substring(0, 4), 10);
+          const yearB = parseInt(b.release_date.substring(0, 4), 10);
+          return yearB - yearA;
+        });
+      } else if (sortOrder === 'oldest') {
+        state.filteredTracks = [...state.filteredTracks].sort((a, b) => {
+          const yearA = parseInt(a.release_date.substring(0, 4), 10);
+          const yearB = parseInt(b.release_date.substring(0, 4), 10);
+          return yearA - yearB;
+        });
+      } else {
+        state.filteredTracks = state.allTracks.filter((track) => {
+          const authorMatch =
+            state.filters.authors.length === 0 ||
+            state.filters.authors.includes(track.author);
+
+          const genreMatch =
+            state.filters.genres.length === 0 ||
+            (Array.isArray(track.genre)
+              ? track.genre.some((g) => state.filters.genres.includes(g))
+              : state.filters.genres.includes(track.genre));
+          return authorMatch && genreMatch;
+        });
+      }
+    },
     setFilterGenres: (state, action: PayloadAction<string>) => {
       const genre = action.payload;
       if (state.filters.genres.includes(genre)) {
@@ -183,5 +213,6 @@ export const {
   setFilterAuthors,
   setPagePlaylist,
   setFilterGenres,
+  setSortByYear,
 } = trackSlice.actions;
 export const trackSliceReducer = trackSlice.reducer;

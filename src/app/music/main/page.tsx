@@ -12,7 +12,7 @@ export default function Home({}) {
 
   useEffect(() => {
     const currentPlaylist =
-      filters.authors.length || filters.genres.length
+      filters.authors.length || filters.genres.length || filters.years.length
         ? filteredTracks
         : allTracks;
     setPlaylist(currentPlaylist);
@@ -21,6 +21,7 @@ export default function Home({}) {
     allTracks,
     filters.authors.length,
     filters.genres.length,
+    filters.years.length,
   ]);
 
   return (
