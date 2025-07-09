@@ -3,11 +3,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './sidebar.module.css';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useAppSelector } from '@/store/store';
+import { setUsername } from '@/store/fearures/authSlice';
 
 export default function Sidebar({}) {
+  const username = useAppSelector((state) => state.auth.username);
   const router = useRouter();
-  const [username, setUsername] = useState('');
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
@@ -25,7 +27,7 @@ export default function Sidebar({}) {
   return (
     <div className={styles.main__sidebar}>
       <div className={styles.sidebar__personal}>
-        <p className={styles.sidebar__personalName}>{username}</p>
+        <p className={styles.sidebar__personalName}>{username || 'User'}</p>
         <Link
           href="/auth/signin"
           className={styles.sidebar__icon}

@@ -14,8 +14,14 @@ import {
 } from '@/store/fearures/trackSlice';
 import ProgressBar from '../ProgressBar/ProgressBar';
 import { formatTime } from '@/utils/helper';
+import { useLikeTrack } from '@/hooks/useLikeTracks';
+import { TrackType } from '@/sharedTypes/sharedTypes';
 
-export default function Bar() {
+interface BarProps {
+  track: TrackType;
+}
+
+export default function Bar({ track }: BarProps) {
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const dispatch = useAppDispatch();
@@ -29,6 +35,7 @@ export default function Bar() {
   const isLoopFromStore = useAppSelector((state) => state.tracks.isLoop);
   const [isLoop, setIsLoop] = useState(false);
   const [volumeVisible, setVolumeVisible] = useState(false);
+  const { toggleLike, isLike } = useLikeTrack(track);
 
   useEffect(() => {
     if (audioRef.current && currentTrack?.track_file) {
@@ -238,11 +245,16 @@ export default function Bar() {
                     styles.btnIcon,
                   )}
                 >
-                  <svg className={styles.trackPlay__likeSvg}>
-                    <use xlinkHref="/Image/icon/sprite.svg#icon-like"></use>
+                  <svg
+                    className={styles.trackPlay__likeSvg}
+                    onClick={toggleLike}
+                  >
+                    <use
+                      xlinkHref={`/Image/icon/sprite.svg#${isLike ? 'icon-like' : 'icon-dislike'}`}
+                    />
                   </svg>
                 </div>
-                <div
+                {/* <div
                   className={classnames(
                     styles.trackPlay__dislike,
                     styles.btnIcon,
@@ -251,7 +263,7 @@ export default function Bar() {
                   <svg className={styles.trackPlay__dislikeSvg}>
                     <use xlinkHref="/Image/icon/sprite.svg#icon-dislike"></use>
                   </svg>
-                </div>
+                </div>*/}
               </div>
             </div>
           </div>

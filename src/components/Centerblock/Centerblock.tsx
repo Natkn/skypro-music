@@ -8,45 +8,18 @@ import { useEffect, useState } from 'react';
 import { TrackType } from '@/sharedTypes/sharedTypes';
 
 interface CenterblockProps {
-  fetchTracks: () => Promise<TrackType[]>;
-  loading: boolean;
-  errorMessage: string | null;
-  setLoading: (loading: boolean) => void;
+  isLoading: boolean;
+  errorRes: string | null;
   tracks: TrackType[];
   playlistName?: string;
 }
 export default function Centerblock({
-  fetchTracks,
   playlistName,
+  errorRes,
+  isLoading,
+  tracks,
 }: CenterblockProps) {
-  const [tracks, setTracks] = useState<TrackType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [headerTitle, setHeaderTitle] = useState('Треки');
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const fetchedTracks = await fetchTracks();
-        if (Array.isArray(fetchedTracks)) {
-          setTracks(fetchedTracks);
-        } else {
-          setErrorMessage(
-            'Ошибка: Данные о треках повреждены. Попробуйте позже.',
-          );
-        }
-        setLoading(false);
-      } catch {
-        setErrorMessage(
-          'Произошла ошибка при загрузке данных. Попробуйте позже.',
-        );
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [fetchTracks]);
 
   useEffect(() => {
     if (playlistName) {
@@ -60,7 +33,7 @@ export default function Centerblock({
     <div className={styles.centerblock}>
       <Search title="" />
       <h2 className={styles.centerblock__h2}>{headerTitle}</h2>
-      <Filter />
+      <Filter tracks={tracks} />
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
           <div className={classnames(styles.playlistTitle__col, styles.col01)}>
@@ -79,20 +52,18 @@ export default function Centerblock({
           </div>
         </div>
         <div className={styles.content__playlist}>
-          {loading ? (
-            <p className={styles.loadingText}>Загрузка...</p>
-          ) : errorMessage ? (
-            <p className={styles.errorText}>{errorMessage}</p>
-          ) : (
-            tracks.map((track) => (
-              <Track
-                key={track._id}
-                track={track}
-                playlist={tracks}
-                tracks={track}
-              />
-            ))
-          )}
+          {errorRes
+            ? errorRes
+            : isLoading
+              ? 'Loading...'
+              : tracks.map((track) => (
+                  <Track
+                    key={track._id}
+                    track={track}
+                    tracks={tracks}
+                    playlist={tracks}
+                  />
+                ))}
         </div>
       </div>
     </div>

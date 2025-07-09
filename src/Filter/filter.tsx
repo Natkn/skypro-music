@@ -3,53 +3,43 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './filter.module.css';
 import classNames from 'classnames';
-import { TrackType } from '@/sharedTypes/sharedTypes';
-
 import FilterItem from '@/FilterItem/filterItem';
-import { getTracks } from '@/app/services/tracks/tracksApi';
 
-export default function Filter({}) {
+interface Track {
+  author: string;
+  genre?: string[] | string;
+}
+
+interface FilterProps {
+  tracks: Track[];
+}
+
+export default function Filter({ tracks }: FilterProps) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [authors, setAuthors] = useState<string[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
-  const [tracks, setTracks] = useState<TrackType[]>([]);
   const authorButtonRef = useRef<HTMLDivElement>(null!);
   const yearButtonRef = useRef<HTMLDivElement>(null!);
   const genreButtonRef = useRef<HTMLDivElement>(null!);
-  const isInitialMount = useRef(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getTracks();
-        if (!response) {
-          throw new Error('Network response was not ok');
-        }
-        const data: TrackType[] = await response;
-        setTracks(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      fetchData();
-    }
-  }, []);
 
   useEffect(() => {
     if (tracks && tracks.length > 0) {
-      const uniqueAuthors = [...new Set(tracks.map((track) => track.author))];
+      const uniqueAuthors: string[] = [
+        ...new Set(tracks.map((track: Track) => track.author)),
+      ];
       setAuthors(uniqueAuthors);
 
       const allGenres: string[] = [];
-      tracks.forEach((track) => {
-        if (track.genre && Array.isArray(track.genre)) {
-          track.genre.forEach((genre) => allGenres.push(genre));
+      tracks.forEach((track: Track) => {
+        if (track.genre) {
+          if (Array.isArray(track.genre)) {
+            track.genre.forEach((genre: string) => allGenres.push(genre));
+          } else {
+            allGenres.push(track.genre);
+          }
         }
       });
-      const uniqueGenres = [...new Set(allGenres)];
+      const uniqueGenres: string[] = [...new Set(allGenres)];
       setGenres(uniqueGenres);
     }
   }, [tracks]);
