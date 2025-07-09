@@ -71,25 +71,3 @@ export const getFavoriteTracks = async (
     throw error;
   }
 };
-
-/*export const getTrackById = async (
-  trackId: number,
-): Promise<TrackType | null> => {
-  try {
-    const response = await axios.get(BASE_URL + `/catalog/track/${trackId}/`);
-
-    if (response.status === 200 && response.data && response.data.data) {
-      return response.data.data as TrackType;
-    } else {
-      console.error(
-        'API returned unexpected data structure or error:',
-        response,
-      );
-      return null;
-    }
-  } catch (error) {
-    console.error('Error fetching track by ID:', error);
-    return null;
-  }
-};
-*/
