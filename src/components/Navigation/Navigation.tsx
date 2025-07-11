@@ -2,29 +2,25 @@
 import Image from 'next/image';
 import styles from './Navigation.module.css';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/store/store';
-import { clearUserData } from '@/store/fearures/authSlice';
+import { useState } from 'react';
+import { useAppSelector } from '@/store/store';
 import { useRouter } from 'next/navigation';
-import { setDelFavTrack } from '@/store/fearures/trackSlice';
+import { useAuth } from '@/app/services/auth/Authprovider';
 
 export default function Navigation() {
-  const dispath = useAppDispatch();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   const { isAuthenticated } = useAppSelector((state) => state.auth);
-  const { userData } = useAppSelector((state) => state.auth);
+  const { signOut } = useAuth();
 
-  useEffect(() => {}, [userData]);
-
-  const logout = () => {
-    dispath(clearUserData());
-    dispath(setDelFavTrack([]));
-    router.push('/auth/signin');
+  const logout = async () => {
+    await signOut();
+    router.push('/music/main');
   };
+
   return (
     <nav className={styles.main__nav}>
       <div className={styles.nav__logo}>
@@ -50,11 +46,13 @@ export default function Navigation() {
               Главное
             </Link>
           </li>
-          <li className={styles.menu__item}>
-            <Link href="/music/favourite" className={styles.menu__link}>
-              Мой плейлист
-            </Link>
-          </li>
+          {isAuthenticated ? (
+            <li className={styles.menu__item}>
+              <Link href="/music/favourite" className={styles.menu__link}>
+                Мой плейлист
+              </Link>
+            </li>
+          ) : null}
           <li className={styles.menu__item}>
             {isAuthenticated ? (
               <p onClick={logout} className={styles.menu__link}>

@@ -9,6 +9,7 @@ interface FilterItemProps {
   onClose: () => void;
   anchorRef: React.RefObject<HTMLDivElement>;
   filterType: string;
+  onSelect: (value: string) => void;
 }
 
 const FilterItem: React.FC<FilterItemProps> = ({
