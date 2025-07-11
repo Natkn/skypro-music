@@ -1,4 +1,3 @@
-// src/components/Search/Search.tsx
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -18,7 +17,7 @@ export default function Search({}) {
       setSearchInput(searchTerm);
 
       if (!searchTerm) {
-        dispatch(setFilteredTracks(allTracks)); //  Отображаем все треки, если строка поиска пуста
+        dispatch(setFilteredTracks(allTracks));
         return;
       }
 

@@ -196,7 +196,6 @@ const trackSlice = createSlice({
       state.favoriteTracks = [];
     },
     setFilteredTracks: (state, action: PayloadAction<TrackType[]>) => {
-      // Добавьте это
       state.filteredTracks = action.payload;
     },
   },

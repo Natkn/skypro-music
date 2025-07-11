@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useAppSelector } from '@/store/store';
 import { setUsername } from '@/store/fearures/authSlice';
-//import { AuthContext } from '@/app/services/auth/Authprovider';
 
 export default function Sidebar({}) {
   const username = useAppSelector((state) => state.auth.username);
