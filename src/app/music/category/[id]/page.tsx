@@ -88,7 +88,11 @@ export default function PlaylistPage({ params }: PageProps) {
       return [];
     }
     let filteredPlaylistTracks = tracks;
-
+    if (filteredTracks.length > 0) {
+      filteredPlaylistTracks = filteredTracks.filter((track) =>
+        tracks.some((playlistTrack) => playlistTrack._id === track._id),
+      );
+    }
     if (
       filters.authors.length > 0 ||
       filters.genres.length > 0 ||

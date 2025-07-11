@@ -195,6 +195,10 @@ const trackSlice = createSlice({
     clearFavoriteTracks: (state) => {
       state.favoriteTracks = [];
     },
+    setFilteredTracks: (state, action: PayloadAction<TrackType[]>) => {
+      // Добавьте это
+      state.filteredTracks = action.payload;
+    },
   },
 });
 
@@ -218,5 +222,6 @@ export const {
   setFilterGenres,
   setSortByYear,
   clearFavoriteTracks,
+  setFilteredTracks,
 } = trackSlice.actions;
 export const trackSliceReducer = trackSlice.reducer;
