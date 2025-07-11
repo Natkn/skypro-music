@@ -13,6 +13,8 @@ import {
   setRefreshToken,
   setUsername,
 } from '@/store/fearures/authSlice';
+import { getFavoriteTracks, getTracks } from '@/app/services/tracks/tracksApi';
+import { setFavoriteTrack } from '@/store/fearures/trackSlice';
 
 export default function Signin() {
   const dispath = useAppDispatch();
@@ -56,6 +58,22 @@ export default function Signin() {
       .then((res) => {
         dispath(setAccessToken(res.access));
         dispath(setRefreshToken(res.refresh));
+        return getFavoriteTracks(res.access);
+      })
+      .then((favoriteTracksResponse) => {
+        if (
+          favoriteTracksResponse &&
+          favoriteTracksResponse.success &&
+          Array.isArray(favoriteTracksResponse.data)
+        ) {
+          dispath(setFavoriteTrack(favoriteTracksResponse.data));
+          dispath(getTracks);
+        } else {
+          console.error(
+            'Ошибка при получении избранных треков после входа:',
+            favoriteTracksResponse,
+          );
+        }
         if (router) {
           router.push('/music/main');
         } else {

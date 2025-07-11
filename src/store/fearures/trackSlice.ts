@@ -192,6 +192,9 @@ const trackSlice = createSlice({
         return authorMatch && genreMatch;
       });
     },
+    clearFavoriteTracks: (state) => {
+      state.favoriteTracks = [];
+    },
   },
 });
 
@@ -214,5 +217,6 @@ export const {
   setPagePlaylist,
   setFilterGenres,
   setSortByYear,
+  clearFavoriteTracks,
 } = trackSlice.actions;
 export const trackSliceReducer = trackSlice.reducer;

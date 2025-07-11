@@ -1,11 +1,16 @@
+'use client';
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import { getFavoriteTracks } from '../tracks/tracksApi';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { ApiResponse } from '@/app/music/favourite/page';
-import { setFavoriteTrack } from '@/store/fearures/trackSlice';
 import { refreshToken } from './authApi';
+import {
+  clearUserData,
+  setAccessToken,
+  setRefreshToken,
+  setUsername,
+} from '@/store/fearures/authSlice';
+import { clearFavoriteTracks } from '@/store/fearures/trackSlice';
+import { getFavoriteTracks } from '../tracks/tracksApi';
 
 interface AuthContextProps {
   user: { username: string } | null;
@@ -14,7 +19,7 @@ interface AuthContextProps {
   accessToken: string | null;
 }
 
-const AuthContext = createContext<AuthContextProps>({
+export const AuthContext = createContext<AuthContextProps>({
   user: null,
   signOut: async () => {},
   isLoggedIn: false,
@@ -27,81 +32,98 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<{ username: string } | null>(null);
-  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
   const dispatch = useAppDispatch();
-  const { favoriteTracks } = useAppSelector((state) => state.tracks);
+  const {
+    access: accessToken,
+    refresh,
+  } = useAppSelector((state) => state.auth);
+
+  const refreshAccessToken = async () => {
+    if (!refresh) {
+      console.error('No refresh token found');
+      return;
+    }
+
+    try {
+      const tokens = await refreshToken(refresh);
+      if (tokens && tokens.access && tokens.refresh) {
+        dispatch(setAccessToken(tokens.access));
+        dispatch(setRefreshToken(tokens.refresh));
+
+        localStorage.setItem('authToken', tokens.access);
+        localStorage.setItem('refreshToken', tokens.refresh);
+      } else {
+        console.error('Failed to refresh token: Invalid response format');
+        dispatch(clearUserData());
+        signOut();
+      }
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+      dispatch(clearUserData());
+      signOut();
+    }
+  };
+
+  const isTokenExpired = () => {
+    if (!accessToken) return true;
+    try {
+      const decodedToken = JSON.parse(atob(accessToken.split('.')[1]));
+      const expiryTime = decodedToken.exp * 1000;
+      return Date.now() >= expiryTime;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return true;
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    const refresh = localStorage.getItem('refreshToken');
+    const refreshTokenFromStorage = localStorage.getItem('refreshToken');
+    const usernameFromStorage = localStorage.getItem('username');
 
-    if (token) {
-      setAccessToken(token);
-      setIsLoggedIn(true);
-    }
-
-    const refreshAccessToken = async () => {
-      if (refresh) {
-        try {
-          const newAccessTokenResponse = await refreshToken(refresh);
-          const newAccessToken = newAccessTokenResponse.access;
-
-          setAccessToken(newAccessToken);
-          localStorage.setItem('authToken', newAccessToken);
-        } catch (error) {
-          console.error('Ошибка при автоматическом обновлении токена:', error);
+    if (token && refreshTokenFromStorage) {
+      if (isTokenExpired()) {
+        refreshAccessToken();
+      } else {
+        dispatch(setAccessToken(token));
+        dispatch(setRefreshToken(refreshTokenFromStorage));
+        if (usernameFromStorage) {
+          dispatch(setUsername(usernameFromStorage));
+        }
+        setIsLoggedIn(true);
+        if (accessToken) {
+          getFavoriteTracks(accessToken)
+            .then((favoriteTracksResponse) => {
+              if (
+                favoriteTracksResponse &&
+                favoriteTracksResponse.success &&
+                Array.isArray(favoriteTracksResponse.data)
+              ) {
+             
+              } else {
+                console.error(
+                  'Ошибка при получении избранных треков после входа:',
+                  favoriteTracksResponse,
+                );
+              }
+            })
+            .catch((error) => {
+              console.error('Ошибка при загрузке избранных треков:', error);
+            });
         }
       }
-    };
-
-    const isTokenExpired = () => {
-      return false;
-    };
-
-    if (isTokenExpired() && refresh) {
-      refreshAccessToken();
     }
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
-  }, [favoriteTracks]);
-
-  useEffect(() => {
-    if (accessToken) {
-      const fetchData = async () => {
-        try {
-          const response: ApiResponse = await getFavoriteTracks(accessToken);
-          if (response && response.success && Array.isArray(response.data)) {
-            dispatch(setFavoriteTrack(response.data));
-          } else {
-            console.error('Ошибка при получении избранных треков:', response);
-          }
-        } catch (error) {
-          console.error('Ошибка при получении избранных треков (API):', error);
-        }
-      };
-
-      fetchData();
-    }
-  }, [accessToken, dispatch]);
 
   const signOut = async () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
-    setAccessToken(null);
-    setIsLoggedIn(false);
+    localStorage.removeItem('username');
+    dispatch(clearUserData());
+    dispatch(clearFavoriteTracks());
     setUser(null);
-
-    try {
-      await axios.post('/api/logout');
-    } catch (error) {
-      console.error('Ошибка при выходе:', error);
-    }
-
-    router.push('/auth/signin');
+    setIsLoggedIn(false);
   };
 
   return (
