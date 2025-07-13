@@ -34,7 +34,9 @@ export default function PlaylistPage({ params }: PageProps) {
   const [tracks, setTracks] = useState<TrackType[]>([]);
   const [playlistData, setPlaylistData] = useState<ApiResponse | null>(null);
   const isFirstRender = useRef(true);
-  const { allTracks } = useAppSelector((state) => state.tracks);
+  const { allTracks, filters, filteredTracks } = useAppSelector(
+    (state) => state.tracks,
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +83,35 @@ export default function PlaylistPage({ params }: PageProps) {
     }
   }, [id, errorMessage, allTracks]);
 
+  const tracksToDisplay = React.useMemo(() => {
+    if (tracks.length === 0) {
+      return [];
+    }
+    let filteredPlaylistTracks = tracks;
+    if (filteredTracks.length > 0) {
+      filteredPlaylistTracks = filteredTracks.filter((track) =>
+        tracks.some((playlistTrack) => playlistTrack._id === track._id),
+      );
+    }
+    if (
+      filters.authors.length > 0 ||
+      filters.genres.length > 0 ||
+      filters.years !== 'По умолчанию'
+    ) {
+      filteredPlaylistTracks = filteredTracks.filter((track) =>
+        tracks.some((playlistTrack) => playlistTrack._id === track._id),
+      );
+    }
+
+    return filteredPlaylistTracks;
+  }, [
+    tracks,
+    filteredTracks,
+    filters.authors.length,
+    filters.genres.length,
+    filters.years,
+  ]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -96,7 +127,8 @@ export default function PlaylistPage({ params }: PageProps) {
   return (
     <>
       <Centerblock
-        tracks={tracks}
+        tracks={tracksToDisplay}
+        pagePlaylist={tracks}
         isLoading={loading}
         errorRes={errorMessage}
         playlistName={playlistData?.name}

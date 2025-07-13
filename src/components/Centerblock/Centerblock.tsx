@@ -6,19 +6,24 @@ import Filter from '@/Filter/filter';
 import Track from '@/Track/track';
 import { useEffect, useState } from 'react';
 import { TrackType } from '@/sharedTypes/sharedTypes';
+import { setPagePlaylist } from '@/store/fearures/trackSlice';
+import { useAppDispatch } from '@/store/store';
 
 interface CenterblockProps {
   isLoading: boolean;
   errorRes: string | null;
   tracks: TrackType[];
   playlistName?: string;
+  pagePlaylist: TrackType[];
 }
 export default function Centerblock({
   playlistName,
   errorRes,
   isLoading,
   tracks,
+  pagePlaylist,
 }: CenterblockProps) {
+  const dispatch = useAppDispatch();
   const [headerTitle, setHeaderTitle] = useState('Треки');
 
   useEffect(() => {
@@ -29,11 +34,17 @@ export default function Centerblock({
     }
   }, [playlistName]);
 
+  useEffect(() => {
+    if (!isLoading && !errorRes) {
+      dispatch(setPagePlaylist(pagePlaylist));
+    }
+  }, [isLoading, errorRes, dispatch, pagePlaylist]);
+
   return (
     <div className={styles.centerblock}>
       <Search title="" />
       <h2 className={styles.centerblock__h2}>{headerTitle}</h2>
-      <Filter tracks={tracks} />
+      <Filter tracks={pagePlaylist} />
       <div className={styles.centerblock__content}>
         <div className={styles.content__title}>
           <div className={classnames(styles.playlistTitle__col, styles.col01)}>

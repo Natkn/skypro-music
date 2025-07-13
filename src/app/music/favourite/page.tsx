@@ -21,40 +21,38 @@ export default function FavoriteTracksPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (access) {
-        try {
-          const response: ApiResponse = await getFavoriteTracks(access);
+      try {
+        setLoading(true);
+        setErrorMessage(null);
+        const response: ApiResponse = await getFavoriteTracks(access);
 
-          if (response && response.success && Array.isArray(response.data)) {
-            dispatch(setFavoriteTrack(response.data));
-          } else {
-            console.error(
-              'getFavoriteTracks не вернул массив в поле data:',
-              response,
-            );
-            setErrorMessage(
-              'Не удалось загрузить любимые треки (неверный формат данных).',
-            );
-          }
-        } catch (error) {
-          console.error('Ошибка при получении избранных треков:', error);
-          setErrorMessage('Не удалось загрузить любимые треки.');
-        } finally {
-          setLoading(false);
+        if (response && response.success && Array.isArray(response.data)) {
+          dispatch(setFavoriteTrack(response.data));
+        } else {
+          console.error(
+            'getFavoriteTracks не вернул массив в поле data:',
+            response,
+          );
+          setErrorMessage(
+            'Не удалось загрузить любимые треки (неверный формат данных).',
+          );
         }
-      } else {
-        setErrorMessage(
-          'Не удалось загрузить любимые треки: нет access token.',
-        );
+      } catch (error) {
+        console.error('Ошибка при получении избранных треков:', error);
+        setErrorMessage('Не удалось загрузить любимые треки.');
+      } finally {
         setLoading(false);
       }
     };
-    fetchData();
+    if (access) {
+      fetchData();
+    }
   }, [access, dispatch]);
 
   return (
     <Centerblock
       tracks={favoriteTracks}
+      pagePlaylist={favoriteTracks}
       isLoading={loading}
       errorRes={errorMessage}
       playlistName="Мои треки"

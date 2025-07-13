@@ -21,7 +21,7 @@ export default function Sidebar({}) {
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('username');
-    router.push('/auth/signin');
+    router.push('/music/main');
   };
 
   return (

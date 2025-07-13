@@ -81,6 +81,12 @@
     text-decoration-thickness: 0%;
   }
 }
+.selected {
+  color: #b672ff;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: 0%;
+}
 
 .filter__list--author .filter__item:last-child {
   padding-bottom: 34px;
