@@ -2,6 +2,7 @@ import { Montserrat } from 'next/font/google';
 import './globals.css';
 import ReduxProvider from '@/store/ReduxProvider';
 import { PlaylistProvider } from '@/Track/trackContext';
+import { AuthProvider } from './services/auth/Authprovider';
 
 export const metadata = {
   title: 'My Page Title',
@@ -21,9 +22,11 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <ReduxProvider>
-        <body className={`${montserrat.variable}`}>
-          <PlaylistProvider>{children} </PlaylistProvider>
-        </body>
+        <AuthProvider>
+          <body className={`${montserrat.variable}`}>
+            <PlaylistProvider>{children} </PlaylistProvider>
+          </body>
+        </AuthProvider>
       </ReduxProvider>
     </html>
   );

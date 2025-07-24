@@ -12,6 +12,13 @@ type initialStateType = {
   fetchError: null | string;
   fetchIsLoading: boolean;
   favoriteTracks: TrackType[];
+  filters: {
+    authors: string[];
+    genres: string[];
+    years: string;
+  };
+  filteredTracks: TrackType[];
+  pagePlaylist: TrackType[];
 };
 
 const initialState: initialStateType = {
@@ -25,6 +32,13 @@ const initialState: initialStateType = {
   fetchError: null,
   fetchIsLoading: true,
   favoriteTracks: [],
+  filters: {
+    authors: [],
+    genres: [],
+    years: 'По умолчанию',
+  },
+  filteredTracks: [],
+  pagePlaylist: [],
 };
 
 const trackSlice = createSlice({
@@ -67,6 +81,7 @@ const trackSlice = createSlice({
     },
     setAllTracks: (state, action: PayloadAction<TrackType[]>) => {
       state.allTracks = action.payload;
+      state.filteredTracks = action.payload;
     },
     setFetchError: (state, action: PayloadAction<string>) => {
       state.fetchError = action.payload;
@@ -104,6 +119,85 @@ const trackSlice = createSlice({
         JSON.stringify(state.favoriteTracks),
       );
     },
+    setPagePlaylist: (state, action) => {
+      state.pagePlaylist = action.payload;
+    },
+    setFilterAuthors: (state, action: PayloadAction<string>) => {
+      const author = action.payload;
+      if (state.filters.authors.includes(author)) {
+        state.filters.authors = state.filters.authors.filter(
+          (el) => el !== author,
+        );
+      } else {
+        state.filters.authors = [...state.filters.authors, author];
+      }
+
+      state.filteredTracks = state.allTracks.filter(
+        (track) =>
+          state.filters.authors.length === 0 ||
+          state.filters.authors.includes(track.author),
+      );
+    },
+    setSortByYear: (state, action: PayloadAction<string>) => {
+      const sortOrder = action.payload;
+      state.filters.years = sortOrder;
+
+      if (sortOrder === 'newest') {
+        state.filteredTracks = [...state.filteredTracks].sort((a, b) => {
+          const yearA = parseInt(a.release_date.substring(0, 4), 10);
+          const yearB = parseInt(b.release_date.substring(0, 4), 10);
+          return yearB - yearA;
+        });
+      } else if (sortOrder === 'oldest') {
+        state.filteredTracks = [...state.filteredTracks].sort((a, b) => {
+          const yearA = parseInt(a.release_date.substring(0, 4), 10);
+          const yearB = parseInt(b.release_date.substring(0, 4), 10);
+          return yearA - yearB;
+        });
+      } else {
+        state.filteredTracks = state.allTracks.filter((track) => {
+          const authorMatch =
+            state.filters.authors.length === 0 ||
+            state.filters.authors.includes(track.author);
+
+          const genreMatch =
+            state.filters.genres.length === 0 ||
+            (Array.isArray(track.genre)
+              ? track.genre.some((g) => state.filters.genres.includes(g))
+              : state.filters.genres.includes(track.genre));
+          return authorMatch && genreMatch;
+        });
+      }
+    },
+    setFilterGenres: (state, action: PayloadAction<string>) => {
+      const genre = action.payload;
+      if (state.filters.genres.includes(genre)) {
+        state.filters.genres = state.filters.genres.filter(
+          (el) => el !== genre,
+        );
+      } else {
+        state.filters.genres = [...state.filters.genres, genre];
+      }
+      state.filteredTracks = state.allTracks.filter((track) => {
+        const authorMatch =
+          state.filters.authors.length === 0 ||
+          state.filters.authors.includes(track.author);
+
+        const genreMatch =
+          state.filters.genres.length === 0 ||
+          (Array.isArray(track.genre)
+            ? track.genre.some((g) => state.filters.genres.includes(g))
+            : state.filters.genres.includes(track.genre));
+
+        return authorMatch && genreMatch;
+      });
+    },
+    clearFavoriteTracks: (state) => {
+      state.favoriteTracks = [];
+    },
+    setFilteredTracks: (state, action: PayloadAction<TrackType[]>) => {
+      state.filteredTracks = action.payload;
+    },
   },
 });
 
@@ -122,5 +216,11 @@ export const {
   setDelFavTrack,
   addLikedTracks,
   removeLikedTracks,
+  setFilterAuthors,
+  setPagePlaylist,
+  setFilterGenres,
+  setSortByYear,
+  clearFavoriteTracks,
+  setFilteredTracks,
 } = trackSlice.actions;
 export const trackSliceReducer = trackSlice.reducer;
